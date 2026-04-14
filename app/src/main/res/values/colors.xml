@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material Design 3 Ukrainian theme colors -->
+    <color name="md_theme_primary">#0061B3</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">#D4E3FF</color>
+    <color name="md_theme_onPrimaryContainer">#001B3E</color>
+    
+    <color name="md_theme_secondary">#525E70</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_secondaryContainer">#D6E3F7</color>
+    <color name="md_theme_onSecondaryContainer">#0E1B2B</color>
+    
+    <color name="md_theme_tertiary">#6A5D7E</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_tertiaryContainer">#F1E0FF</color>
+    <color name="md_theme_onTertiaryContainer">#241237</color>
+    
+    <color name="md_theme_error">#BA1A1A</color>
+    <color name="md_theme_errorContainer">#FFDAD6</color>
+    <color name="md_theme_onError">#FFFFFF</color>
+    <color name="md_theme_onErrorContainer">#410002</color>
+    
+    <color name="md_theme_background">#F8F9FF</color>
+    <color name="md_theme_onBackground">#191C20</color>
+    <color name="md_theme_surface">#F8F9FF</color>
+    <color name="md_theme_onSurface">#191C20</color>
+    <color name="md_theme_surfaceVariant">#DFE2EB</color>
+    <color name="md_theme_onSurfaceVariant">#43474E</color>
+    
+    <color name="md_theme_outline">#73777F</color>
+    <color name="md_theme_inverseOnSurface">#F0F0F7</color>
+    <color name="md_theme_inverseSurface">#2E3135</color>
+    <color name="md_theme_inversePrimary">#A6C8FF</color>
+    <color name="md_theme_shadow">#000000</color>
+    <color name="md_theme_surfaceTint">#0061B3</color>
+    <color name="md_theme_outlineVariant">#C3C6CF</color>
+    <color name="md_theme_scrim">#000000</color>
+    
+    <!-- Status colors -->
+    <color name="status_active">#2E8B57</color>
+    <color name="status_idle">#FF8C00</color>
+    <color name="status_alert">#DC143C</color>
+    
+    <!-- Ukrainian flag colors -->
+    <color name="ukraine_blue">#0057B7</color>
+    <color name="ukraine_yellow">#FFD700</color>
+    
+    <!-- Additional semantic colors -->
+    <color name="surface_elevated">#FFFFFF</color>
+    <color name="surface_elevated_2">#F3F4FA</color>
+    <color name="text_primary">#1C1B1F</color>
+    <color name="text_secondary">#49454E</color>
+    <color name="divider">#E6E0E9</color>
+</resources>

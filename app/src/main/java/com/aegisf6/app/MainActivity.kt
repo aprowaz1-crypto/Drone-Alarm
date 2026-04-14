@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.tvFilterMode.text = getString(R.string.filter_auto_mode)
 
         Configuration.getInstance().userAgentValue = packageName
 
@@ -48,6 +47,12 @@ class MainActivity : AppCompatActivity() {
         )[AegisViewModel::class.java]
 
         mapController = MapOverlayController(binding.map)
+
+        setupSourceSelector()
+        setupButtons()
+        observeState()
+        requestLocationPermissionIfNeeded()
+    }
 
         setupSourceSelector()
         setupButtons()
@@ -118,11 +123,19 @@ class MainActivity : AppCompatActivity() {
                         ActiveSourceMode.PHONE_SOLO -> getString(R.string.mode_phone_solo)
                     }
 
-                    binding.tvStatus.text = if (state.monitorActive) {
-                        getString(R.string.status_active)
+                    // Update status with indicator
+                    val (statusText, statusDrawable) = if (state.monitorActive) {
+                        if (state.telemetry.accepted && state.telemetry.confidence > 70) {
+                            Pair(getString(R.string.status_alert), R.drawable.status_alert_indicator)
+                        } else {
+                            Pair(getString(R.string.status_active), R.drawable.status_active_indicator)
+                        }
                     } else {
-                        getString(R.string.status_idle)
+                        Pair(getString(R.string.status_idle), R.drawable.status_idle_indicator)
                     }
+
+                    binding.tvStatus.text = statusText
+                    binding.ivStatusIndicator.setImageResource(statusDrawable)
 
                     binding.tvSourceResolved.text = getString(
                         R.string.source_runtime,
@@ -149,7 +162,7 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     val filled = (state.telemetry.confidence / 10).coerceIn(0, 10)
-                    val bar = "#".repeat(filled) + ".".repeat(10 - filled)
+                    val bar = "█".repeat(filled) + "░".repeat(10 - filled)
                     binding.tvSpectrum.text = getString(R.string.spectrum_template, bar)
 
                     binding.tvCalibration.text = if (state.calibrating) {

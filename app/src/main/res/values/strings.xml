@@ -1,24 +1,51 @@
 <resources>
-    <string name="app_name">AEGIS-F6</string>
-    <string name="source_auto">Auto (Smart Switch)</string>
-    <string name="source_phone">Тільки телефон (Phone Solo)</string>
-    <string name="source_array">Тільки масив (Multi-Array)</string>
+    <string name="app_name">AEGIS-F6 Охорона Неба</string>
+    
+    <!-- Main interface -->
+    <string name="main_title">🇺🇦 AEGIS-F6 Троєщина</string>
+    <string name="location_subtitle">вул. Ніколаєва 13, Київ</string>
+    
+    <!-- Source modes -->
+    <string name="source_auto">🤖 Авто (Розумний вибір)</string>
+    <string name="source_phone">📱 Тільки телефон</string>
+    <string name="source_array">🔊 Тільки масив мікрофонів</string>
 
-    <string name="status_active">СТАТУС: МОНІТОРИНГ АКТИВНО</string>
-    <string name="status_idle">СТАТУС: МОНІТОРИНГ ПАУЗА</string>
+    <!-- Status messages -->
+    <string name="status_active">🟢 МОНІТОРИНГ АКТИВНИЙ</string>
+    <string name="status_idle">🟡 МОНІТОРИНГ НА ПАУЗІ</string>
+    <string name="status_alert">🔴 ВИЯВЛЕНО ЗАГРОЗУ</string>
 
-    <string name="mode_multi_array">Multi-Array</string>
-    <string name="mode_phone_solo">Phone Solo</string>
-    <string name="source_runtime">Джерело: %1$s | BT: %2$d</string>
-    <string name="filter_auto_mode">Фільтр: Міський шум (AUTO, завжди увімкнено)</string>
-    <string name="calibration_idle">Калібрування: вимкнено | baseline: %1$d%%</string>
-    <string name="calibration_running">Калібрування фону: %1$d с</string>
+    <!-- Source display -->
+    <string name="mode_multi_array">Масив мікрофонів</string>
+    <string name="mode_phone_solo">Телефон</string>
+    <string name="source_runtime">🎯 Режим: %1$s • Bluetooth: %2$d пристроїв</string>
+    
+    <!-- Filter management -->
+    <string name="filter_auto_mode">🏙️ Фільтр міського шуму: АВТО</string>
+    <string name="filter_description">Автоматично відфільтровує міський шум та хибні спрацювання</string>
+    
+    <!-- Calibration -->
+    <string name="calibration_idle">📊 Калібрування: готове • Фон: %1$d%%</string>
+    <string name="calibration_running">⏱️ Калібрування фону: %1$d сек</string>
+    <string name="calibration_button">🎛️ Калібрувати 60с</string>
 
-    <string name="telemetry_template">Тип: %1$s\nRaw/Filtered: %2$d%% / %3$d%%\nДистанція: %4$.2f км | Швидкість: %5$d км/год\nНапрямок: %6$d° | Висота: %7$d м\nETA: ~%8$d с | Невизначеність: ±%9$d м\nСтатус: %10$s</string>
-    <string name="spectrum_template">Спектр 40-150 Гц: [%1$s]</string>
-    <string name="detection_accepted">підтверджено</string>
-    <string name="detection_rejected">відхилено: %1$s</string>
+    <!-- Telemetry display -->
+    <string name="telemetry_title">📡 ТЕЛЕМЕТРІЯ ОБ'ЄКТА</string>
+    <string name="telemetry_template">🎯 Тип: %1$s\n📊 Сигнал: %2$d%% → %3$d%%\n📍 Дистанція: %4$.2f км • Швидкість: %5$d км/год\n🧭 Напрямок: %6$d° • Висота: %7$d м\n⏰ Час до прибуття: ~%8$d с\n🎯 Точність: ±%9$d м\n✅ Статус: %10$s</string>
+    <string name="spectrum_template">🎵 Спектр 40-150 Гц: [%1$s]</string>
+    <string name="detection_accepted">✅ підтверджено</string>
+    <string name="detection_rejected">❌ відхилено: %1$s</string>
 
-    <string name="map_style_standard">Карта: OSM</string>
-    <string name="map_style_topo">Карта: Topo</string>
+    <!-- Map controls -->
+    <string name="map_style_standard">🗺️ OSM Стандарт</string>
+    <string name="map_style_topo">🏔️ Топографічна</string>
+    <string name="map_title">🗺️ КАРТА РАЙОНУ</string>
+    
+    <!-- Location specific -->
+    <string name="troieshchyna_info">📍 Троєщина - житловий район на півночі Києва</string>
+    <string name="coverage_info">🛡️ Покриття: радіус 5 км від вашої позиції</string>
+    
+    <!-- Additional info -->
+    <string name="app_subtitle">Система раннього виявлення повітряних цілей</string>
+    <string name="version_info">Версія: v1.0 • Троєщина Edition</string>
 </resources>

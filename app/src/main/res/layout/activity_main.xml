@@ -1,16 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_theme_background"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:paddingVertical="@dimen/spacing_sm">
 
+        <!-- Header Card with Location -->
         <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Aegis.Card.Header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/header_gradient"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_lg">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_title"
+                    android:textAppearance="@style/TextAppearance.Aegis.Title"
+                    android:textColor="@color/md_theme_onPrimary"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="@string/location_subtitle"
+                    android:textAppearance="@style/TextAppearance.Aegis.Body"
+                    android:textColor="@color/md_theme_onPrimary"
+                    android:gravity="center"
+                    android:alpha="0.9"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="@string/app_subtitle"
+                    android:textAppearance="@style/TextAppearance.Aegis.Caption"
+                    android:textColor="@color/md_theme_onPrimary"
+                    android:gravity="center"
+                    android:alpha="0.7"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Status Card -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Aegis.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <!-- Status with indicator -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/ivStatusIndicator"
+                        android:layout_width="@dimen/icon_size_medium"
+                        android:layout_height="@dimen/icon_size_medium"
+                        android:src="@drawable/status_active_indicator"
+                        android:layout_marginEnd="@dimen/spacing_md"/>
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/status_active"
+                        android:textAppearance="@style/TextAppearance.Aegis.Status.Active"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="@dimen/spacing_md" 
+                    android:background="@color/divider"/>
+
+                <!-- Source info -->
+                <TextView
+                    android:id="@+id/tvSourceResolved"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🎯 Режим: Auto • Bluetooth: 0 пристроїв"
+                    android:textAppearance="@style/TextAppearance.Aegis.Body"/>
+
+                <!-- Calibration info -->
+                <TextView
+                    android:id="@+id/tvCalibration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="📊 Калібрування: готове • Фон: 0%"
+                    android:textAppearance="@style/TextAppearance.Aegis.BodySecondary"/>
+
+                <!-- Filter info -->
+                <TextView
+                    android:id="@+id/tvFilterMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="@string/filter_auto_mode"
+                    android:textAppearance="@style/TextAppearance.Aegis.BodySecondary"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="@string/filter_description"
+                    android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Controls Card -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Aegis.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -18,101 +146,174 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="@dimen/card_padding">
 
                 <TextView
-                    android:id="@+id/tvStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="СТАТУС: МОНІТОРИНГ АКТИВНО"
-                    android:textStyle="bold" />
+                    android:text="⚙️ НАЛАШТУВАННЯ"
+                    android:textAppearance="@style/TextAppearance.Aegis.Headline"
+                    android:layout_marginBottom="@dimen/spacing_md"/>
 
-                <TextView
-                    android:id="@+id/tvSourceResolved"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Джерело: Auto" />
-
-                <TextView
-                    android:id="@+id/tvCalibration"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Калібрування: вимкнено" />
-
-                <TextView
-                    android:id="@+id/tvFilterMode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Фільтр: Міський шум (AUTO)" />
-
+                <!-- Source selector row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/spacing_md">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Джерело:"
+                        android:textAppearance="@style/TextAppearance.Aegis.Body"
+                        android:layout_marginEnd="@dimen/spacing_md"/>
 
                     <Spinner
                         android:id="@+id/spSource"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:padding="@dimen/spacing_sm"/>
+
+                </LinearLayout>
+
+                <!-- Button row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
                     <Button
                         android:id="@+id/btnMapStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="2D/Topo" />
+                        style="@style/Widget.Aegis.Button.Secondary"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/spacing_sm"
+                        android:text="@string/map_style_standard"/>
 
                     <Button
                         android:id="@+id/btnCalibrate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Калібрувати 60с" />
+                        style="@style/Widget.Aegis.Button.Primary"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:text="@string/calibration_button"/>
+
                 </LinearLayout>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Map Card -->
         <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Aegis.Card"
             android:layout_width="match_parent"
-            android:layout_height="320dp"
-            android:layout_marginTop="10dp">
+            android:layout_height="wrap_content">
 
-            <org.osmdroid.views.MapView
-                android:id="@+id/map"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Map header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" 
+                    android:padding="@dimen/spacing_md"
+                    android:background="@color/md_theme_surfaceVariant">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/map_title"
+                        android:textAppearance="@style/TextAppearance.Aegis.Headline"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="@string/troieshchyna_info"
+                        android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="@string/coverage_info"
+                        android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
+
+                </LinearLayout>
+
+                <org.osmdroid.views.MapView
+                    android:id="@+id/map"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/map_height"/>
+
+            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Telemetry Card -->
         <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Aegis.Card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/telemetry_title"
+                    android:textAppearance="@style/TextAppearance.Aegis.Headline"
+                    android:layout_marginBottom="@dimen/spacing_md"/>
 
                 <TextView
                     android:id="@+id/tvTelemetry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Дані: очікування"
-                    android:textSize="13sp" />
+                    android:text="🔍 Очікування цілей..."
+                    android:textAppearance="@style/TextAppearance.Aegis.Body"
+                    android:fontFamily="monospace"
+                    android:layout_marginBottom="@dimen/spacing_md"/>
+
+                <!-- Spectrum visualization with title -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🎵 Акустичний спектр"
+                    android:textAppearance="@style/TextAppearance.Aegis.Body"
+                    android:layout_marginBottom="@dimen/spacing_sm"/>
 
                 <TextView
                     android:id="@+id/tvSpectrum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Спектр 40-150 Гц: [░░░░░░░░░░░░░░░░]" />
+                    android:text="Спектр 40-150 Гц: [░░░░░░░░░░░░░░░░]"
+                    android:textAppearance="@style/TextAppearance.Aegis.Caption"
+                    android:fontFamily="monospace"
+                    android:background="@color/md_theme_surfaceVariant"
+                    android:padding="@dimen/spacing_sm"/>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- Footer with version info -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/version_info"
+            android:textAppearance="@style/TextAppearance.Aegis.Caption"
+            android:gravity="center"
+            android:paddingVertical="@dimen/spacing_md"/>
+
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

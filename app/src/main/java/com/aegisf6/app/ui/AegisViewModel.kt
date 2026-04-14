@@ -160,8 +160,9 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
     }
 
     private fun initialState(): AegisUiState {
-        val baseLat = 50.4501
-        val baseLon = 30.5234
+        // Координати Троєщини, Ніколаєва 13, Київ, Україна
+        val baseLat = 50.5249
+        val baseLon = 30.5672
         return AegisUiState(
             monitorActive = true,
             forcedMode = ForcedSourceMode.AUTO,
