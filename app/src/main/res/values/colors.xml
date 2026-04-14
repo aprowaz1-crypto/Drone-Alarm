@@ -52,4 +52,12 @@
     <color name="text_primary">#1C1B1F</color>
     <color name="text_secondary">#49454E</color>
     <color name="divider">#E6E0E9</color>
+
+    <!-- Radar visualization -->
+    <color name="radar_background">#091B2B</color>
+    <color name="radar_grid">#3C7BA8</color>
+    <color name="radar_sweep">#62C9FF</color>
+    <color name="radar_blip">#7AFFA4</color>
+    <color name="radar_blip_rejected">#FF7A7A</color>
+    <color name="radar_center">#DDF2FF</color>
 </resources>

@@ -105,7 +105,7 @@
                     android:id="@+id/tvSourceResolved"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="🎯 Режим: Auto • Bluetooth: 0 пристроїв"
+                    android:text="@string/source_runtime_placeholder"
                     android:textAppearance="@style/TextAppearance.Aegis.Body"/>
 
                 <!-- Calibration info -->
@@ -114,7 +114,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
-                    android:text="📊 Калібрування: готове • Фон: 0%"
+                    android:text="@string/calibration_idle_placeholder"
                     android:textAppearance="@style/TextAppearance.Aegis.BodySecondary"/>
 
                 <!-- Filter info -->
@@ -132,6 +132,40 @@
                     android:layout_marginTop="@dimen/spacing_xs"
                     android:text="@string/filter_description"
                     android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Aegis.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radar_title"
+                    android:textAppearance="@style/TextAppearance.Aegis.Headline"
+                    android:layout_marginBottom="@dimen/spacing_sm"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radar_subtitle"
+                    android:textAppearance="@style/TextAppearance.Aegis.Caption"
+                    android:layout_marginBottom="@dimen/spacing_md"/>
+
+                <com.aegisf6.app.ui.RadarView
+                    android:id="@+id/radarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:background="@color/radar_background"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -279,7 +313,7 @@
                     android:id="@+id/tvTelemetry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="🔍 Очікування цілей..."
+                    android:text="@string/telemetry_waiting"
                     android:textAppearance="@style/TextAppearance.Aegis.Body"
                     android:fontFamily="monospace"
                     android:layout_marginBottom="@dimen/spacing_md"/>
@@ -296,7 +330,7 @@
                     android:id="@+id/tvSpectrum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Спектр 40-150 Гц: [░░░░░░░░░░░░░░░░]"
+                    android:text="@string/spectrum_placeholder"
                     android:textAppearance="@style/TextAppearance.Aegis.Caption"
                     android:fontFamily="monospace"
                     android:background="@color/md_theme_surfaceVariant"

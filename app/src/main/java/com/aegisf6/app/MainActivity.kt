@@ -19,8 +19,8 @@ import com.aegisf6.app.model.ForcedSourceMode
 import com.aegisf6.app.model.MapStyle
 import com.aegisf6.app.ui.AegisViewModel
 import com.aegisf6.app.ui.AegisViewModelFactory
-import org.osmdroid.config.Configuration
 import kotlinx.coroutines.launch
+import org.osmdroid.config.Configuration
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,12 +47,6 @@ class MainActivity : AppCompatActivity() {
         )[AegisViewModel::class.java]
 
         mapController = MapOverlayController(binding.map)
-
-        setupSourceSelector()
-        setupButtons()
-        observeState()
-        requestLocationPermissionIfNeeded()
-    }
 
         setupSourceSelector()
         setupButtons()
@@ -164,6 +158,11 @@ class MainActivity : AppCompatActivity() {
                     val filled = (state.telemetry.confidence / 10).coerceIn(0, 10)
                     val bar = "█".repeat(filled) + "░".repeat(10 - filled)
                     binding.tvSpectrum.text = getString(R.string.spectrum_template, bar)
+                    binding.radarView.updateTelemetry(
+                        azimuthDeg = state.telemetry.azimuthDeg.toFloat(),
+                        confidence = state.telemetry.confidence,
+                        accepted = state.telemetry.accepted
+                    )
 
                     binding.tvCalibration.text = if (state.calibrating) {
                         getString(R.string.calibration_running, state.calibrationSecondsLeft)

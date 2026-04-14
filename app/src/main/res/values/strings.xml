@@ -19,6 +19,7 @@
     <string name="mode_multi_array">Масив мікрофонів</string>
     <string name="mode_phone_solo">Телефон</string>
     <string name="source_runtime">🎯 Режим: %1$s • Bluetooth: %2$d пристроїв</string>
+    <string name="source_runtime_placeholder">🎯 Режим: Авто • Bluetooth: 0 пристроїв</string>
     
     <!-- Filter management -->
     <string name="filter_auto_mode">🏙️ Фільтр міського шуму: АВТО</string>
@@ -28,13 +29,19 @@
     <string name="calibration_idle">📊 Калібрування: готове • Фон: %1$d%%</string>
     <string name="calibration_running">⏱️ Калібрування фону: %1$d сек</string>
     <string name="calibration_button">🎛️ Калібрувати 60с</string>
+    <string name="calibration_idle_placeholder">📊 Калібрування: готове • Фон: 0%%</string>
 
     <!-- Telemetry display -->
     <string name="telemetry_title">📡 ТЕЛЕМЕТРІЯ ОБ'ЄКТА</string>
+    <string name="telemetry_waiting">Очікування цілей...</string>
     <string name="telemetry_template">🎯 Тип: %1$s\n📊 Сигнал: %2$d%% → %3$d%%\n📍 Дистанція: %4$.2f км • Швидкість: %5$d км/год\n🧭 Напрямок: %6$d° • Висота: %7$d м\n⏰ Час до прибуття: ~%8$d с\n🎯 Точність: ±%9$d м\n✅ Статус: %10$s</string>
     <string name="spectrum_template">🎵 Спектр 40-150 Гц: [%1$s]</string>
+    <string name="spectrum_placeholder">Спектр 40-150 Гц: [░░░░░░░░░░]</string>
     <string name="detection_accepted">✅ підтверджено</string>
     <string name="detection_rejected">❌ відхилено: %1$s</string>
+
+    <string name="radar_title">🛰️ РАДАРНИЙ ОГЛЯД</string>
+    <string name="radar_subtitle">Промінь сканує сектор, мітка показує напрямок та силу сигналу</string>
 
     <!-- Map controls -->
     <string name="map_style_standard">🗺️ OSM Стандарт</string>
