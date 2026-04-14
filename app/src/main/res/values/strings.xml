@@ -32,9 +32,9 @@
     <string name="calibration_idle_placeholder">Калібрування: готове • Фон: 0 відс.</string>
 
     <!-- Telemetry display -->
-    <string name="telemetry_title">📡 ТЕЛЕМЕТРІЯ ОБ'ЄКТА</string>
+    <string name="telemetry_title">ТЕЛЕМЕТРІЯ ОБ ЄКТА</string>
     <string name="telemetry_waiting">Очікування цілей...</string>
-    <string name="telemetry_template">🎯 Тип: %1$s\n📊 Сигнал: %2$d%% → %3$d%%\n📍 Дистанція: %4$.2f км • Швидкість: %5$d км/год\n🧭 Напрямок: %6$d° • Висота: %7$d м\n⏰ Час до прибуття: ~%8$d с\n🎯 Точність: ±%9$d м\n✅ Статус: %10$s</string>
+    <string name="telemetry_template">Тип: %1$s | Сигнал: %2$d%% -&gt; %3$d%% | Дистанція: %4$.2f км | Швидкість: %5$d км/год | Напрямок: %6$d° | Висота: %7$d м | Час: %8$d с | Точність: %9$d м | Статус: %10$s</string>
     <string name="spectrum_template">🎵 Спектр 40-150 Гц: [%1$s]</string>
     <string name="spectrum_placeholder">Спектр 40-150 Гц: [----------]</string>
     <string name="detection_accepted">✅ підтверджено</string>
