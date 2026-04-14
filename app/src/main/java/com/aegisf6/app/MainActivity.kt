@@ -88,6 +88,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnMapStyle.setOnClickListener {
             viewModel.toggleMapStyle()
         }
+        binding.btnCalibrate.setOnClickListener {
+            viewModel.startCalibration()
+        }
     }
 
     private fun requestLocationPermissionIfNeeded() {
@@ -129,18 +132,30 @@ class MainActivity : AppCompatActivity() {
                     binding.tvTelemetry.text = getString(
                         R.string.telemetry_template,
                         state.telemetry.objectType,
+                        state.telemetry.rawConfidence,
                         state.telemetry.confidence,
                         state.telemetry.distanceKm,
                         state.telemetry.speedKmh,
                         state.telemetry.azimuthDeg,
                         state.telemetry.altitudeM,
                         state.telemetry.etaSec,
-                        state.telemetry.uncertaintyM
+                        state.telemetry.uncertaintyM,
+                        if (state.telemetry.accepted) {
+                            getString(R.string.detection_accepted)
+                        } else {
+                            getString(R.string.detection_rejected, state.telemetry.rejectReason)
+                        }
                     )
 
                     val filled = (state.telemetry.confidence / 10).coerceIn(0, 10)
                     val bar = "#".repeat(filled) + ".".repeat(10 - filled)
                     binding.tvSpectrum.text = getString(R.string.spectrum_template, bar)
+
+                    binding.tvCalibration.text = if (state.calibrating) {
+                        getString(R.string.calibration_running, state.calibrationSecondsLeft)
+                    } else {
+                        getString(R.string.calibration_idle, state.backgroundBaseline)
+                    }
 
                     when (state.mapStyle) {
                         MapStyle.OSM_STANDARD -> binding.btnMapStyle.text = getString(R.string.map_style_standard)

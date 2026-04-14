@@ -34,6 +34,13 @@
                     android:layout_marginTop="4dp"
                     android:text="Джерело: Auto" />
 
+                <TextView
+                    android:id="@+id/tvCalibration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Калібрування: вимкнено" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -52,6 +59,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="2D/Topo" />
+
+                    <Button
+                        android:id="@+id/btnCalibrate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Калібрувати 60с" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

@@ -10,9 +10,13 @@
     <string name="mode_multi_array">Multi-Array</string>
     <string name="mode_phone_solo">Phone Solo</string>
     <string name="source_runtime">Джерело: %1$s | BT: %2$d</string>
+    <string name="calibration_idle">Калібрування: вимкнено | baseline: %1$d%%</string>
+    <string name="calibration_running">Калібрування фону: %1$d с</string>
 
-    <string name="telemetry_template">Тип: %1$s (%2$d%%)\nДистанція: %3$.2f км | Швидкість: %4$d км/год\nНапрямок: %5$d° | Висота: %6$d м\nETA: ~%7$d с | Невизначеність: ±%8$d м</string>
+    <string name="telemetry_template">Тип: %1$s\nRaw/Filtered: %2$d%% / %3$d%%\nДистанція: %4$.2f км | Швидкість: %5$d км/год\nНапрямок: %6$d° | Висота: %7$d м\nETA: ~%8$d с | Невизначеність: ±%9$d м\nСтатус: %10$s</string>
     <string name="spectrum_template">Спектр 40-150 Гц: [%1$s]</string>
+    <string name="detection_accepted">підтверджено</string>
+    <string name="detection_rejected">відхилено: %1$s</string>
 
     <string name="map_style_standard">Карта: OSM</string>
     <string name="map_style_topo">Карта: Topo</string>

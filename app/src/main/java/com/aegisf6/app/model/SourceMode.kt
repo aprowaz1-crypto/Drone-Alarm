@@ -17,6 +17,7 @@ enum class MapStyle {
 }
 
 data class DetectionSnapshot(
+    val rawConfidence: Int,
     val confidence: Int,
     val objectType: String,
     val distanceKm: Double,
@@ -24,7 +25,15 @@ data class DetectionSnapshot(
     val azimuthDeg: Int,
     val altitudeM: Int,
     val etaSec: Int,
-    val uncertaintyM: Int
+    val uncertaintyM: Int,
+    val accepted: Boolean,
+    val rejectReason: String
+)
+
+data class ConfidenceThresholds(
+    val phoneSolo: Int,
+    val btArray2plus: Int,
+    val btArray4plus: Int
 )
 
 data class AegisUiState(
@@ -38,5 +47,9 @@ data class AegisUiState(
     val targetLat: Double,
     val targetLon: Double,
     val trajectory: List<Pair<Double, Double>>,
-    val telemetry: DetectionSnapshot
+    val telemetry: DetectionSnapshot,
+    val thresholds: ConfidenceThresholds,
+    val calibrating: Boolean,
+    val calibrationSecondsLeft: Int,
+    val backgroundBaseline: Int
 )
