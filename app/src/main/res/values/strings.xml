@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">AEGIS-F6</string>
+    <string name="source_auto">Auto (Smart Switch)</string>
+    <string name="source_phone">Тільки телефон (Phone Solo)</string>
+    <string name="source_array">Тільки масив (Multi-Array)</string>
+
+    <string name="status_active">СТАТУС: МОНІТОРИНГ АКТИВНО</string>
+    <string name="status_idle">СТАТУС: МОНІТОРИНГ ПАУЗА</string>
+
+    <string name="mode_multi_array">Multi-Array</string>
+    <string name="mode_phone_solo">Phone Solo</string>
+    <string name="source_runtime">Джерело: %1$s | BT: %2$d</string>
+
+    <string name="telemetry_template">Тип: %1$s (%2$d%%)\nДистанція: %3$.2f км | Швидкість: %4$d км/год\nНапрямок: %5$d° | Висота: %6$d м\nETA: ~%7$d с | Невизначеність: ±%8$d м</string>
+    <string name="spectrum_template">Спектр 40-150 Гц: [%1$s]</string>
+
+    <string name="map_style_standard">Карта: OSM</string>
+    <string name="map_style_topo">Карта: Topo</string>
 </resources>
