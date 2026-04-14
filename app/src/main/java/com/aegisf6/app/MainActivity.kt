@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.tvFilterMode.text = getString(R.string.filter_auto_mode)
 
         Configuration.getInstance().userAgentValue = packageName
 

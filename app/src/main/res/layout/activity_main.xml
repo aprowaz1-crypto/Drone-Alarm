@@ -41,6 +41,13 @@
                     android:layout_marginTop="4dp"
                     android:text="Калібрування: вимкнено" />
 
+                <TextView
+                    android:id="@+id/tvFilterMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Фільтр: Міський шум (AUTO)" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
