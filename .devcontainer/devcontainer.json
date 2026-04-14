@@ -1,0 +1,20 @@
+{
+  "name": "Android Drone Alarm",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17"
+    }
+  },
+  "postCreateCommand": "set -e; sudo mkdir -p /opt/android-sdk; cd /opt/android-sdk; curl -L -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip; unzip -o cmdline-tools.zip; mkdir -p cmdline-tools/latest; mv -f cmdline-tools/bin cmdline-tools/lib cmdline-tools/NOTICE.txt cmdline-tools/source.properties cmdline-tools/latest/; yes | /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/opt/android-sdk --licenses; /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/opt/android-sdk \"platforms;android-34\" \"build-tools;34.0.0\" \"platform-tools\"; grep -q ANDROID_HOME ~/.bashrc || echo 'export ANDROID_HOME=/opt/android-sdk' >> ~/.bashrc; grep -q cmdline-tools/latest/bin ~/.bashrc || echo 'export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin' >> ~/.bashrc",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "android.android-java",
+        "github.copilot",
+        "ms-python.python"
+      ]
+    }
+  }
+}

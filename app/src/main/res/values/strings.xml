@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Drone Alarm</string>
+    <string name="monitoring_active">Drone Alarm: моніторинг активний</string>
+    <string name="channel_name">Drone Alarm Monitor</string>
+</resources>
