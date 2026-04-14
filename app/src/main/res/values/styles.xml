@@ -64,19 +64,19 @@
         <item name="android:textColor">@color/text_secondary</item>
     </style>
 
-    <style name="TextAppearance.Aegis.Status.Active">
+    <style name="TextAppearance.Aegis.Status.Active" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textSize">@dimen/text_body_large</item>
         <item name="android:textColor">@color/status_active</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Aegis.Status.Idle">
+    <style name="TextAppearance.Aegis.Status.Idle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textSize">@dimen/text_body_large</item>
         <item name="android:textColor">@color/status_idle</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextAppearance.Aegis.Status.Alert">
+    <style name="TextAppearance.Aegis.Status.Alert" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textSize">@dimen/text_body_large</item>
         <item name="android:textColor">@color/status_alert</item>
         <item name="android:textStyle">bold</item>
