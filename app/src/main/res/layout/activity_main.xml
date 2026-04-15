@@ -277,12 +277,28 @@
                     android:layout_marginTop="@dimen/spacing_sm"
                     android:text="@string/mic_enable"/>
 
+                <Button
+                    android:id="@+id/btnJblStrict"
+                    style="@style/Widget.Aegis.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="@string/jbl_strict_enable"/>
+
                 <TextView
                     android:id="@+id/tvCalibrationHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
                     android:text="@string/calibration_requires_headphones"
+                    android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
+
+                <TextView
+                    android:id="@+id/tvSensitivityMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="@string/adaptive_sensitivity_normal"
                     android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
 
             </LinearLayout>

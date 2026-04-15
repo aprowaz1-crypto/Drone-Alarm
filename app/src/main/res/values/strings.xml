@@ -3,7 +3,7 @@
     
     <!-- Main interface -->
     <string name="main_title">AEGIS-F6 Троєщина</string>
-    <string name="location_subtitle">вул. Ніколаєва 13, Київ</string>
+    <string name="location_subtitle">вул. Ніколаєва 17, Київ</string>
     
     <!-- Source modes -->
     <string name="source_auto">Авто (розумний вибір)</string>
@@ -50,6 +50,12 @@
     <string name="mic_disable">Вимкнути мікрофон</string>
     <string name="mic_active">Мікрофон: АКТИВНИЙ</string>
     <string name="mic_inactive">Мікрофон: ВИМКНЕНО</string>
+    <string name="jbl_strict_enable">JBL Strict: увімкнути</string>
+    <string name="jbl_strict_disable">JBL Strict: вимкнути</string>
+    <string name="jbl_strict_active">JBL Strict: АКТИВНИЙ</string>
+    <string name="jbl_strict_inactive">JBL Strict: ВИМКНЕНО</string>
+    <string name="adaptive_sensitivity_night_quiet">Адаптивна чутливість: НІЧ/ТИША (строгий режим)</string>
+    <string name="adaptive_sensitivity_normal">Адаптивна чутливість: НОРМА</string>
 
     <!-- Map controls -->
     <string name="map_style_standard">OSM Стандарт</string>

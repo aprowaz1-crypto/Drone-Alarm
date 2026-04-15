@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class AegisViewModel(
     private val bluetoothProbe: BluetoothProbe,
@@ -99,6 +100,13 @@ class AegisViewModel(
             microphoneEnabled = micEnabled,
             monitorActive = micEnabled
         )
+    }
+
+    fun toggleJblStrictMode() {
+        val current = _state.value
+        val enabled = !current.jblStrictMode
+        _state.value = current.copy(jblStrictMode = enabled)
+        DiagnosticsLog.toFix("JBL strict mode toggled: enabled=$enabled")
     }
 
     fun setForcedMode(mode: ForcedSourceMode) {
@@ -252,7 +260,7 @@ class AegisViewModel(
         val targetKind = resolveTargetKind(classifiedType)
         val distanceForUi = simDistanceKm.coerceAtMost(targetKind.maxDistanceKm)
 
-        val threshold = resolveThreshold(active, btCount, current.thresholds)
+        val threshold = resolveThreshold(active, btCount, current.thresholds, current.jblStrictMode)
         val finalConfidence = blendConfidence(filter.filteredConfidence, classifierConfidence, btCount)
         val inRange = simDistanceKm <= targetKind.maxDistanceKm
         val accepted = !calibration.calibrating && finalConfidence >= threshold && inRange
@@ -370,7 +378,9 @@ class AegisViewModel(
             lastConfidences = recentRawConfidences.toList()
         )
 
-        val threshold = resolveThreshold(active, btCount, current.thresholds)
+        val threshold = resolveThreshold(active, btCount, current.thresholds, current.jblStrictMode)
+        val adaptiveThresholdBoost = adaptiveThresholdBoost(frame.rmsDb, current.jblStrictMode)
+        val effectiveThreshold = min(99, threshold + adaptiveThresholdBoost)
         val finalConfidence = blendConfidence(
             filterConfidence = filter.filteredConfidence,
             classifierConfidence = classifierConfidence,
@@ -378,13 +388,23 @@ class AegisViewModel(
             likelyHouseholdNoise = likelyHouseholdNoise
         )
         val inRange = rawDistanceKm <= targetKind.maxDistanceKm
-        val accepted = !calibration.calibrating && finalConfidence >= threshold && inRange && !likelyHouseholdNoise
+        val accepted = !calibration.calibrating &&
+            finalConfidence >= effectiveThreshold &&
+            inRange &&
+            !likelyHouseholdNoise
         val rejectReason = when {
             calibration.calibrating -> "Калібрування фону активне"
             likelyHouseholdNoise -> "Ймовірний побутовий шум (PS5/вентилятор)"
             !inRange -> "Поза дальністю ${targetKind.maxDistanceKm} км для цього типу"
             accepted -> ""
-            else -> "${filter.reason}; нижче порогу ${threshold}%"
+            else -> "${filter.reason}; нижче порогу ${effectiveThreshold}%"
+        }
+
+        if (adaptiveThresholdBoost > 0) {
+            DiagnosticsLog.toFixOnce(
+                key = "adaptive_sensitivity_active",
+                message = "Adaptive sensitivity active (night/quiet), threshold boost=$adaptiveThresholdBoost"
+            )
         }
 
         if (rejectReason.isNotBlank() && rejectReason != lastRejectReasonLogged) {
@@ -536,23 +556,44 @@ class AegisViewModel(
     private fun resolveThreshold(
         activeMode: ActiveSourceMode,
         btMicCount: Int,
-        thresholds: ConfidenceThresholds
+        thresholds: ConfidenceThresholds,
+        strictMode: Boolean
     ): Int {
-        return when (activeMode) {
+        val baseThreshold = when (activeMode) {
             ActiveSourceMode.PHONE_SOLO -> thresholds.phoneSolo
             ActiveSourceMode.MULTI_ARRAY -> {
                 if (btMicCount >= 4) thresholds.btArray4plus else thresholds.btArray2plus
             }
         }
+        val strictDelta = if (strictMode) 6 else 0
+        return (baseThreshold + strictDelta).coerceIn(0, 100)
+    }
+
+    private fun adaptiveThresholdBoost(rmsDb: Double, strictMode: Boolean): Int {
+        val night = isNightHours()
+        val quiet = rmsDb < -38.0
+        return when {
+            strictMode && night && quiet -> 8
+            strictMode && (night || quiet) -> 5
+            !strictMode && night && quiet -> 4
+            !strictMode && (night || quiet) -> 2
+            else -> 0
+        }
+    }
+
+    private fun isNightHours(): Boolean {
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        return hour >= 22 || hour < 6
     }
 
     private fun initialState(): AegisUiState {
-        // Координати Троєщини, Ніколаєва 13, Київ, Україна
-        val baseLat = 50.5249
-        val baseLon = 30.5672
+        // Координати Троєщини, Ніколаєва 17, Київ, Україна (fallback без GPS)
+        val baseLat = 50.5252
+        val baseLon = 30.5678
         return AegisUiState(
             monitorActive = false,
             microphoneEnabled = false,
+            jblStrictMode = false,
             forcedMode = ForcedSourceMode.AUTO,
             activeMode = ActiveSourceMode.PHONE_SOLO,
             mapStyle = MapStyle.OSM_STANDARD,

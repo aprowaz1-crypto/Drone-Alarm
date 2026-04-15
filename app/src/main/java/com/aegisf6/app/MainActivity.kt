@@ -120,6 +120,9 @@ class MainActivity : AppCompatActivity() {
                 requestMicrophonePermissionAndEnable()
             }
         }
+        binding.btnJblStrict.setOnClickListener {
+            viewModel.toggleJblStrictMode()
+        }
     }
 
     private fun requestMicrophonePermissionAndEnable() {
@@ -225,6 +228,19 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.mic_disable)
                     } else {
                         getString(R.string.mic_enable)
+                    }
+
+                    binding.btnJblStrict.text = if (state.jblStrictMode) {
+                        getString(R.string.jbl_strict_disable)
+                    } else {
+                        getString(R.string.jbl_strict_enable)
+                    }
+                    binding.tvSensitivityMode.text = when {
+                        state.jblStrictMode && state.telemetry.rejectReason.contains("побутовий шум", ignoreCase = true) -> {
+                            getString(R.string.adaptive_sensitivity_night_quiet)
+                        }
+                        state.jblStrictMode -> getString(R.string.jbl_strict_active)
+                        else -> getString(R.string.adaptive_sensitivity_normal)
                     }
 
                     binding.tvTelemetry.text = getString(
