@@ -141,12 +141,15 @@
                     android:text="НАЛАШТУВАННЯ КЕРУВАННЯ"
                     android:textAppearance="@style/TextAppearance.Aegis.Headline" />
 
-                <Spinner
+                <TextView
                     android:id="@+id/spSource"
-                    style="@style/Widget.Aegis.Spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+                    android:layout_marginTop="10dp"
+                    android:padding="12dp"
+                    android:background="@color/md_theme_surfaceVariant"
+                    android:text="JBL гарнітура"
+                    android:textAppearance="@style/TextAppearance.Aegis.Body" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

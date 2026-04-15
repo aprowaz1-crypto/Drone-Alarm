@@ -3,8 +3,6 @@ package com.aegisf6.app
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.AdapterView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,8 +14,6 @@ import com.aegisf6.app.databinding.ActivityMainBinding
 import com.aegisf6.app.device.BluetoothProbe
 import com.aegisf6.app.device.LocationProvider
 import com.aegisf6.app.map.MapOverlayController
-import com.aegisf6.app.model.ActiveSourceMode
-import com.aegisf6.app.model.ForcedSourceMode
 import com.aegisf6.app.model.MapStyle
 import com.aegisf6.app.ui.AegisViewModel
 import com.aegisf6.app.ui.AegisViewModelFactory
@@ -30,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: AegisViewModel
     private lateinit var mapController: MapOverlayController
+    private lateinit var bluetoothProbe: BluetoothProbe
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -57,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         Configuration.getInstance().userAgentValue = packageName
 
-        val bluetoothProbe = BluetoothProbe(this)
+        bluetoothProbe = BluetoothProbe(this)
         val audioProcessor = AudioProcessor(sampleRateHz = 44100, bufferSizeFrames = 2048)
         val locationProvider = LocationProvider(this)
 
@@ -68,7 +65,6 @@ class MainActivity : AppCompatActivity() {
 
         mapController = MapOverlayController(binding.map)
 
-        setupSourceSelector()
         setupButtons()
         observeState()
         requestLocationPermissionIfNeeded()
@@ -82,26 +78,6 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         binding.map.onPause()
         super.onPause()
-    }
-
-    private fun setupSourceSelector() {
-        val items = listOf(
-            getString(R.string.source_auto),
-            getString(R.string.source_phone),
-            getString(R.string.source_array)
-        )
-        binding.spSource.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
-        binding.spSource.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                when (position) {
-                    1 -> viewModel.setForcedMode(ForcedSourceMode.PHONE_ONLY)
-                    2 -> viewModel.setForcedMode(ForcedSourceMode.ARRAY_ONLY)
-                    else -> viewModel.setForcedMode(ForcedSourceMode.AUTO)
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-        }
     }
 
     private fun setupButtons() {
@@ -160,10 +136,8 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
 
-                    val sourceLabel = when (state.activeMode) {
-                        ActiveSourceMode.MULTI_ARRAY -> getString(R.string.mode_multi_array)
-                        ActiveSourceMode.PHONE_SOLO -> getString(R.string.mode_phone_solo)
-                    }
+                    val sourceLabel = getString(R.string.mode_jbl_headset)
+                    val headsetReady = bluetoothProbe.isReliableHeadsetReady()
 
                     // Update status with indicator
                     val (statusText, statusDrawable) = if (state.monitorActive) {
@@ -195,15 +169,17 @@ class MainActivity : AppCompatActivity() {
                         state.btMicCount
                     )
 
-                    binding.tvMicStatus.text = if (state.microphoneEnabled) {
-                        getString(R.string.mic_active)
+                    binding.tvMicStatus.text = if (state.microphoneEnabled && headsetReady) {
+                        getString(R.string.mic_active_verified)
+                    } else if (state.microphoneEnabled) {
+                        getString(R.string.mic_active_unverified)
                     } else {
                         getString(R.string.mic_inactive)
                     }
 
                     val diagnosticsSummary = buildList {
                         if (!state.microphoneEnabled) add(getString(R.string.diagnostics_not_ok_mic_off))
-                        if (state.btMicCount <= 0) add(getString(R.string.diagnostics_not_added_headphones))
+                        if (!headsetReady) add(getString(R.string.diagnostics_not_added_headphones))
                         if (!state.telemetry.accepted && state.telemetry.rejectReason.isNotBlank()) {
                             add(getString(R.string.diagnostics_not_ok_reject, state.telemetry.rejectReason))
                         }
@@ -300,7 +276,9 @@ class MainActivity : AppCompatActivity() {
                         userLat = state.userLat,
                         userLon = state.userLon,
                         targetLat = state.targetLat,
-                        targetLon = state.targetLon
+                        targetLon = state.targetLon,
+                        targetKind = state.telemetry.targetKind,
+                        accepted = state.telemetry.accepted
                     )
                 }
             }

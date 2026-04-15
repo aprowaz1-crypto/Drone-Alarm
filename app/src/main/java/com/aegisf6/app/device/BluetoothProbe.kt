@@ -10,6 +10,21 @@ import androidx.core.content.ContextCompat
 import com.aegisf6.app.util.DiagnosticsLog
 
 class BluetoothProbe(private val context: Context) {
+    fun isReliableHeadsetReady(): Boolean {
+        val adapter = BluetoothAdapter.getDefaultAdapter() ?: return false
+        if (!adapter.isEnabled) return false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val granted = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) == PackageManager.PERMISSION_GRANTED
+            if (!granted) return false
+        }
+        val headsetConnected = adapter.getProfileConnectionState(BluetoothProfile.HEADSET) == BluetoothProfile.STATE_CONNECTED
+        val a2dpConnected = adapter.getProfileConnectionState(BluetoothProfile.A2DP) == BluetoothProfile.STATE_CONNECTED
+        return headsetConnected && a2dpConnected
+    }
+
     fun connectedAudioMicDevices(): Int {
         val adapter = BluetoothAdapter.getDefaultAdapter() ?: run {
             DiagnosticsLog.missingOnce(

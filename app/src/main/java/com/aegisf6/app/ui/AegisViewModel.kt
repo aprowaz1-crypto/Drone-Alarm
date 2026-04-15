@@ -7,7 +7,6 @@ import com.aegisf6.app.audio.AudioProcessor
 import com.aegisf6.app.device.BluetoothProbe
 import com.aegisf6.app.device.LocationProvider
 import com.aegisf6.app.engine.AcousticRanging
-import com.aegisf6.app.engine.SmartSourceSelector
 import com.aegisf6.app.engine.StereoLocalization
 import com.aegisf6.app.engine.TargetClassifier
 import com.aegisf6.app.engine.ThreatAiAnalyzer
@@ -17,7 +16,6 @@ import com.aegisf6.app.model.ActiveSourceMode
 import com.aegisf6.app.model.AegisUiState
 import com.aegisf6.app.model.ConfidenceThresholds
 import com.aegisf6.app.model.DetectionSnapshot
-import com.aegisf6.app.model.ForcedSourceMode
 import com.aegisf6.app.model.MapStyle
 import com.aegisf6.app.model.TargetKind
 import com.aegisf6.app.util.DiagnosticsLog
@@ -111,12 +109,6 @@ class AegisViewModel(
         DiagnosticsLog.toFix("JBL strict mode toggled: enabled=$enabled")
     }
 
-    fun setForcedMode(mode: ForcedSourceMode) {
-        val current = _state.value
-        val active = SmartSourceSelector.resolve(mode, current.btMicCount)
-        _state.value = current.copy(forcedMode = mode, activeMode = active)
-    }
-
     fun toggleMapStyle() {
         val next = if (_state.value.mapStyle == MapStyle.OSM_STANDARD) {
             MapStyle.OSM_TOPO
@@ -171,7 +163,7 @@ class AegisViewModel(
         }
 
         val btCount = bluetoothProbe.connectedAudioMicDevices()
-        val active = SmartSourceSelector.resolve(current.forcedMode, btCount)
+        val active = if (btCount > 0) ActiveSourceMode.MULTI_ARRAY else ActiveSourceMode.PHONE_SOLO
 
         if (btCount > 0 && !headsetPresetLogged) {
             DiagnosticsLog.toFix("Headset anti-noise preset active (Bluetooth): stronger household noise suppression")
@@ -633,7 +625,7 @@ class AegisViewModel(
             monitorActive = false,
             microphoneEnabled = false,
             jblStrictMode = false,
-            forcedMode = ForcedSourceMode.AUTO,
+            forcedMode = com.aegisf6.app.model.ForcedSourceMode.ARRAY_ONLY,
             activeMode = ActiveSourceMode.PHONE_SOLO,
             mapStyle = MapStyle.OSM_STANDARD,
             btMicCount = 0,

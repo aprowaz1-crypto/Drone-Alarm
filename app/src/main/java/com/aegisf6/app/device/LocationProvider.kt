@@ -71,6 +71,11 @@ class LocationProvider(private val context: Context) {
                 return false
             }
 
+            getLastKnownLocation()?.let { snapshot ->
+                _location.value = snapshot
+                DiagnosticsLog.toFix("Loaded last known location: ${snapshot.latitude}, ${snapshot.longitude}")
+            }
+
             // Спробувати GPS спочатку
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locationManager.requestLocationUpdates(

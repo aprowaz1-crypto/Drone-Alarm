@@ -6,9 +6,9 @@
     <string name="location_subtitle">вул. Ніколаєва 17, Київ</string>
     
     <!-- Source modes -->
-    <string name="source_auto">Авто (розумний вибір)</string>
-    <string name="source_phone">Тільки телефон</string>
-    <string name="source_array">Тільки масив мікрофонів</string>
+    <string name="source_auto">JBL режим</string>
+    <string name="source_phone">JBL гарнітура</string>
+    <string name="source_array">JBL гарнітура</string>
 
     <!-- Status messages -->
     <string name="status_active">МОНІТОРИНГ АКТИВНИЙ</string>
@@ -16,10 +16,11 @@
     <string name="status_alert">ВИЯВЛЕНО ЗАГРОЗУ</string>
 
     <!-- Source display -->
-    <string name="mode_multi_array">Масив мікрофонів</string>
-    <string name="mode_phone_solo">Телефон</string>
-    <string name="source_runtime">Режим: %1$s • Bluetooth: %2$d пристроїв</string>
-    <string name="source_runtime_placeholder">Режим: Авто • Bluetooth: 0 пристроїв</string>
+    <string name="mode_multi_array">JBL гарнітура</string>
+    <string name="mode_phone_solo">JBL гарнітура</string>
+    <string name="mode_jbl_headset">JBL гарнітура</string>
+    <string name="source_runtime">Режим: %1$s • Bluetooth профілі: %2$d</string>
+    <string name="source_runtime_placeholder">Режим: JBL гарнітура • Bluetooth профілі: 0</string>
     
     <!-- Filter management -->
     <string name="filter_auto_mode">Фільтр міського шуму: АВТО</string>
@@ -49,6 +50,8 @@
     <string name="mic_enable">Увімкнути мікрофон</string>
     <string name="mic_disable">Вимкнути мікрофон</string>
     <string name="mic_active">Мікрофон: АКТИВНИЙ</string>
+    <string name="mic_active_verified">JBL: ПІДКЛЮЧЕНО І ГОТОВО</string>
+    <string name="mic_active_unverified">JBL: МІКРОФОН УВІМКНЕНО, АЛЕ ПРОФІЛЬ НЕ ПІДТВЕРДЖЕНО</string>
     <string name="mic_inactive">Мікрофон: ВИМКНЕНО</string>
     <string name="jbl_strict_enable">JBL Strict: увімкнути</string>
     <string name="jbl_strict_disable">JBL Strict: вимкнути</string>
