@@ -29,7 +29,7 @@ object AcousticRanging {
     }
 
     private fun Double.pow(exponent: Double): Double {
-        return kotlin.math.pow(this, exponent)
+        return Math.pow(this, exponent)
     }
 }
 
@@ -58,7 +58,7 @@ object StereoLocalization {
         // Азимут з ITD: sin(θ) = ITD / maxITD
         val normalized = (itdMicros / maxItdMicros).coerceIn(-1.0, 1.0)
         val azimuthRad = kotlin.math.asin(normalized)
-        val azimuthDeg = kotlin.math.toDegrees(azimuthRad)
+        val azimuthDeg = Math.toDegrees(azimuthRad)
         
         // Конвертувати в діапазон 0-360
         return ((azimuthDeg + 90) % 360).toInt().coerceIn(0, 359)
