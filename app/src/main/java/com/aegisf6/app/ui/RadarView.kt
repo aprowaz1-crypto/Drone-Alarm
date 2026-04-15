@@ -75,6 +75,20 @@ class RadarView @JvmOverloads constructor(
         alpha = 200
     }
 
+    private val telemetryPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.radar_blip)
+        textSize = 20f
+        textAlign = Paint.Align.LEFT
+        alpha = 255
+    }
+
+    private val telemetrySmallPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.radar_grid)
+        textSize = 16f
+        textAlign = Paint.Align.LEFT
+        alpha = 200
+    }
+
     private val sweepAnimator = ValueAnimator.ofFloat(0f, 360f).apply {
         duration = 3000L
         repeatCount = ValueAnimator.INFINITE
@@ -96,6 +110,8 @@ class RadarView @JvmOverloads constructor(
     private var sweepAngle = 0f
     private var pulseScale = 1f
     private var targetAzimuth = 0f
+    private var targetAltitude = 0  // Висота в метрах
+    private var targetDistance = 0.0  // Дальність в км
     private var targetStrength = 0
     private var accepted = false
     private var isMonitorActive = false
@@ -112,8 +128,10 @@ class RadarView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
-    fun updateTelemetry(azimuthDeg: Float, confidence: Int, accepted: Boolean, isActive: Boolean) {
+    fun updateTelemetry(azimuthDeg: Float, altitudeM: Int, distanceKm: Double, confidence: Int, accepted: Boolean, isActive: Boolean) {
         this.targetAzimuth = azimuthDeg
+        this.targetAltitude = altitudeM
+        this.targetDistance = distanceKm
         this.targetStrength = confidence.coerceIn(0, 100)
         this.accepted = accepted
         this.isMonitorActive = isActive
@@ -169,6 +187,7 @@ class RadarView @JvmOverloads constructor(
         val x = cx + cos(azimuth).toFloat() * signalRadius
         val y = cy + sin(azimuth).toFloat() * signalRadius
         val blipSize = radius * (0.038f + 0.022f * (targetStrength / 100f))
+        
         if (accepted) {
             blipRingPaint.alpha = (220 / pulseScale).toInt().coerceIn(30, 220)
             canvas.drawCircle(x, y, blipSize * pulseScale, blipRingPaint)
@@ -176,5 +195,33 @@ class RadarView @JvmOverloads constructor(
         } else {
             canvas.drawCircle(x, y, blipSize, rejectedBlipPaint)
         }
+
+        // Розташування текстових міток
+        val textOffsetX = blipSize + radius * 0.08f
+        val textOffsetY = blipSize + radius * 0.04f
+
+        // Азимут: XXX°
+        canvas.drawText(
+            String.format("%03d°", targetAzimuth.toInt()),
+            x + textOffsetX,
+            y - textOffsetY + radius * 0.02f,
+            telemetryPaint
+        )
+
+        // Висота: XXXm
+        canvas.drawText(
+            String.format("%d м", targetAltitude),
+            x + textOffsetX,
+            y,
+            telemetrySmallPaint
+        )
+
+        // Дальність: X.Xкм
+        canvas.drawText(
+            String.format("%.1f км", targetDistance),
+            x + textOffsetX,
+            y + textOffsetY - radius * 0.02f,
+            telemetrySmallPaint
+        )
     }
 }
