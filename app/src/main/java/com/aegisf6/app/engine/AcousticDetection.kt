@@ -159,6 +159,12 @@ object TargetClassifier {
         val signalStrength = rmsDb - backgroundDb
 
         return when {
+            // Стаціонарний побутовий шум (консолі/вентилятори/БЖ)
+            peakFrequencyHz in 90f..230f &&
+            signalStrength in 5.0..20.0 &&
+            distanceKm < 2.5 -> {
+                "Побутовий шум (ймовірно PS5/вентилятор)" to 20
+            }
             // Шахед-подібні дрони: частота 75-150 Hz, до 5км
             peakFrequencyHz in DRONE_FREQ_MIN..DRONE_FREQ_MAX && 
             signalStrength > 8 && 

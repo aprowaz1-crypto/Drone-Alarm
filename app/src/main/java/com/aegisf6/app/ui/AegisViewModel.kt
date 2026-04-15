@@ -25,6 +25,7 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,6 +48,9 @@ class AegisViewModel(
     private var calibrationTicksLeft = 0
     private val azimuthHistory = ArrayDeque<Int>()
     private val altitudeHistory = ArrayDeque<Int>()
+    private val frequencyHistory = ArrayDeque<Float>()
+    private var lastRejectReasonLogged = ""
+    private var lastHouseholdNoiseLogAtMs = 0L
 
     init {
         DiagnosticsLog.toFix("Real-time microphone DSP detection enabled; Bluetooth headset smoothing active")
@@ -313,7 +317,12 @@ class AegisViewModel(
             frame.rightChannel,
             frame.peakFrequencyHz
         )
-        val smoothedAltitudeM = smoothAltitude((elevationDeg * 30 + 250).coerceAtLeast(40), btCount)
+        val preStabilizedAltitude = stabilizeAltitude(
+            rawAltitudeM = (elevationDeg * 30 + 250).coerceAtLeast(40),
+            previousAltitudeM = current.telemetry.altitudeM,
+            btCount = btCount
+        )
+        val smoothedAltitudeM = smoothAltitude(preStabilizedAltitude, btCount)
 
         val (objectType, classifierConfidence) = TargetClassifier.classify(
             frame.peakFrequencyHz,
@@ -321,6 +330,16 @@ class AegisViewModel(
             frame.rmsDb,
             calibration.baseline.toDouble() - 70.0
         )
+
+        val likelyHouseholdNoise = isLikelyHouseholdNoise(frame, rawDistanceKm)
+        if (likelyHouseholdNoise) {
+            val nowMs = System.currentTimeMillis()
+            if (nowMs - lastHouseholdNoiseLogAtMs > 8_000L) {
+                DiagnosticsLog.notOk("Household noise suppressed (possible PS5/fan), freq=${frame.peakFrequencyHz.toInt()}Hz")
+                lastHouseholdNoiseLogAtMs = nowMs
+            }
+        }
+
         val targetKind = resolveTargetKind(objectType)
         val distanceKm = rawDistanceKm.coerceAtMost(targetKind.maxDistanceKm)
         if (targetKind == TargetKind.SHAHED && rawDistanceKm > 5.0) {
@@ -344,12 +363,18 @@ class AegisViewModel(
         val threshold = resolveThreshold(active, btCount, current.thresholds)
         val finalConfidence = blendConfidence(filter.filteredConfidence, classifierConfidence, btCount)
         val inRange = rawDistanceKm <= targetKind.maxDistanceKm
-        val accepted = !calibration.calibrating && finalConfidence >= threshold && inRange
+        val accepted = !calibration.calibrating && finalConfidence >= threshold && inRange && !likelyHouseholdNoise
         val rejectReason = when {
             calibration.calibrating -> "Калібрування фону активне"
+            likelyHouseholdNoise -> "Ймовірний побутовий шум (PS5/вентилятор)"
             !inRange -> "Поза дальністю ${targetKind.maxDistanceKm} км для цього типу"
             accepted -> ""
             else -> "${filter.reason}; нижче порогу ${threshold}%"
+        }
+
+        if (rejectReason.isNotBlank() && rejectReason != lastRejectReasonLogged) {
+            DiagnosticsLog.notOk("Detection rejected: $rejectReason")
+            lastRejectReasonLogged = rejectReason
         }
 
         val (targetLat, targetLon) = TrajectoryMath.project(
@@ -367,7 +392,7 @@ class AegisViewModel(
             distanceKm = distanceKm,
             speedKmh = 0,
             azimuthDeg = smoothedAzimuthDeg,
-            altitudeM = smoothedAltitudeM,
+            altitudeM = if (likelyHouseholdNoise) current.telemetry.altitudeM else smoothedAltitudeM,
             etaSec = 0,
             uncertaintyM = resolveUncertaintyM(active, btCount, targetKind),
             accepted = accepted,
@@ -429,6 +454,32 @@ class AegisViewModel(
         altitudeHistory.addLast(rawAltitudeM)
         while (altitudeHistory.size > window) altitudeHistory.removeFirst()
         return altitudeHistory.average().roundToInt().coerceAtLeast(0)
+    }
+
+    private fun stabilizeAltitude(rawAltitudeM: Int, previousAltitudeM: Int, btCount: Int): Int {
+        val clampedRaw = rawAltitudeM.coerceIn(40, 3000)
+        val maxStep = if (btCount > 0) 50 else 70
+        val delta = (clampedRaw - previousAltitudeM).coerceIn(-maxStep, maxStep)
+        return (previousAltitudeM + delta).coerceAtLeast(0)
+    }
+
+    private fun isLikelyHouseholdNoise(frame: AudioFrame, distanceKm: Double): Boolean {
+        frequencyHistory.addLast(frame.peakFrequencyHz)
+        while (frequencyHistory.size > 14) frequencyHistory.removeFirst()
+        if (frequencyHistory.size < 8) return false
+
+        val meanFreq = frequencyHistory.average().toFloat()
+        val variance = frequencyHistory
+            .map { (it - meanFreq) * (it - meanFreq) }
+            .average()
+        val stdDev = sqrt(variance.toDouble()).toFloat()
+
+        val householdBand = meanFreq in 92f..220f || meanFreq in 47f..63f
+        val stableTone = stdDev < 9.5f
+        val nearField = distanceKm < 2.3
+        val notTooLoud = frame.rmsDb < -18.0
+
+        return householdBand && stableTone && nearField && notTooLoud
     }
 
     private fun resolveUncertaintyM(

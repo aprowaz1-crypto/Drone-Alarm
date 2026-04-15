@@ -62,6 +62,7 @@
 
     <string name="diagnostics_title">ДІАГНОСТИКА</string>
     <string name="diagnostics_ok">Усе стабільно: критичних проблем не виявлено</string>
+    <string name="diagnostics_recent_logs">Останні логи</string>
     <string name="diagnostics_not_ok_mic_off">NOT_OK: мікрофон вимкнений</string>
     <string name="diagnostics_not_added_headphones">NOT_ADDED: Bluetooth-навушники не підключені</string>
     <string name="diagnostics_not_ok_reject">NOT_OK: %1$s</string>

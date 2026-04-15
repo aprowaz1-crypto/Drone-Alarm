@@ -205,10 +205,20 @@ class MainActivity : AppCompatActivity() {
                             add(getString(R.string.diagnostics_not_ok_reject, state.telemetry.rejectReason))
                         }
                     }.joinToString(separator = "\n")
-                    binding.tvDiagnostics.text = if (diagnosticsSummary.isBlank()) {
-                        getString(R.string.diagnostics_ok)
-                    } else {
-                        diagnosticsSummary
+
+                    val recentLogs = DiagnosticsLog.recent(4).joinToString(separator = "\n")
+                    binding.tvDiagnostics.text = buildString {
+                        if (diagnosticsSummary.isBlank()) {
+                            append(getString(R.string.diagnostics_ok))
+                        } else {
+                            append(diagnosticsSummary)
+                        }
+                        if (recentLogs.isNotBlank()) {
+                            append("\n\n")
+                            append(getString(R.string.diagnostics_recent_logs))
+                            append("\n")
+                            append(recentLogs)
+                        }
                     }
 
                     binding.btnMic.text = if (state.microphoneEnabled) {
