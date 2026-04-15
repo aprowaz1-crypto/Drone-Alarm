@@ -38,6 +38,7 @@ data class ConfidenceThresholds(
 
 data class AegisUiState(
     val monitorActive: Boolean,
+    val microphoneEnabled: Boolean,
     val forcedMode: ForcedSourceMode,
     val activeMode: ActiveSourceMode,
     val mapStyle: MapStyle,

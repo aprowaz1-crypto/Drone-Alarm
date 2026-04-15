@@ -39,6 +39,15 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
         }
     }
 
+    fun toggleMicrophone() {
+        val current = _state.value
+        val micEnabled = !current.microphoneEnabled
+        _state.value = current.copy(
+            microphoneEnabled = micEnabled,
+            monitorActive = micEnabled
+        )
+    }
+
     fun setForcedMode(mode: ForcedSourceMode) {
         val current = _state.value
         val active = SmartSourceSelector.resolve(mode, current.btMicCount)
@@ -66,6 +75,7 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
 
     private fun tick() {
         val current = _state.value
+        if (!current.microphoneEnabled) return
         val btCount = bluetoothProbe.connectedAudioMicDevices()
         val active = SmartSourceSelector.resolve(current.forcedMode, btCount)
 
@@ -164,7 +174,8 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
         val baseLat = 50.5249
         val baseLon = 30.5672
         return AegisUiState(
-            monitorActive = true,
+            monitorActive = false,
+            microphoneEnabled = false,
             forcedMode = ForcedSourceMode.AUTO,
             activeMode = ActiveSourceMode.PHONE_SOLO,
             mapStyle = MapStyle.OSM_STANDARD,

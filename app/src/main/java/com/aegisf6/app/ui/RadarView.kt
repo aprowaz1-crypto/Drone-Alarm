@@ -4,8 +4,10 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import androidx.core.content.ContextCompat
 import com.aegisf6.app.R
@@ -19,27 +21,46 @@ class RadarView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.radar_background)
+        style = Paint.Style.FILL
+    }
+
     private val gridPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.radar_grid)
         style = Paint.Style.STROKE
-        strokeWidth = 2f
+        strokeWidth = 1.5f
+        alpha = 160
     }
 
-    private val sweepPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val sweepLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.radar_sweep)
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
-        strokeWidth = 4f
+        strokeWidth = 3f
     }
 
-    private val blipPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val sweepFanPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.radar_sweep)
+        style = Paint.Style.FILL
+        alpha = 38
+    }
+
+    private val blipFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.radar_blip)
         style = Paint.Style.FILL
+    }
+
+    private val blipRingPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.radar_blip)
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
     }
 
     private val rejectedBlipPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.radar_blip_rejected)
         style = Paint.Style.FILL
+        alpha = 160
     }
 
     private val centerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -47,8 +68,15 @@ class RadarView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
+    private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.radar_grid)
+        textSize = 26f
+        textAlign = Paint.Align.CENTER
+        alpha = 200
+    }
+
     private val sweepAnimator = ValueAnimator.ofFloat(0f, 360f).apply {
-        duration = 2200L
+        duration = 3000L
         repeatCount = ValueAnimator.INFINITE
         interpolator = LinearInterpolator()
         addUpdateListener {
@@ -57,25 +85,38 @@ class RadarView @JvmOverloads constructor(
         }
     }
 
+    private val pulseAnimator = ValueAnimator.ofFloat(1f, 2.6f).apply {
+        duration = 1000L
+        repeatCount = ValueAnimator.INFINITE
+        interpolator = DecelerateInterpolator()
+        addUpdateListener { pulseScale = it.animatedValue as Float }
+    }
+
+    private val sweepFanRect = RectF()
     private var sweepAngle = 0f
+    private var pulseScale = 1f
     private var targetAzimuth = 0f
     private var targetStrength = 0
     private var accepted = false
+    private var isMonitorActive = false
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         sweepAnimator.start()
+        pulseAnimator.start()
     }
 
     override fun onDetachedFromWindow() {
         sweepAnimator.cancel()
+        pulseAnimator.cancel()
         super.onDetachedFromWindow()
     }
 
-    fun updateTelemetry(azimuthDeg: Float, confidence: Int, accepted: Boolean) {
+    fun updateTelemetry(azimuthDeg: Float, confidence: Int, accepted: Boolean, isActive: Boolean) {
         this.targetAzimuth = azimuthDeg
         this.targetStrength = confidence.coerceIn(0, 100)
         this.accepted = accepted
+        this.isMonitorActive = isActive
         invalidate()
     }
 
@@ -83,37 +124,57 @@ class RadarView @JvmOverloads constructor(
         super.onDraw(canvas)
         val cx = width / 2f
         val cy = height / 2f
-        val radius = min(width, height) * 0.45f
+        val radius = min(width, height) * 0.43f
 
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), backgroundPaint)
         drawGrid(canvas, cx, cy, radius)
-        drawSweep(canvas, cx, cy, radius)
-        drawTarget(canvas, cx, cy, radius)
-        canvas.drawCircle(cx, cy, radius * 0.04f, centerPaint)
+        drawCardinalLabels(canvas, cx, cy, radius)
+        if (isMonitorActive) {
+            drawSweep(canvas, cx, cy, radius)
+        }
+        if (isMonitorActive && targetStrength > 0) {
+            drawTarget(canvas, cx, cy, radius)
+        }
+        canvas.drawCircle(cx, cy, radius * 0.035f, centerPaint)
     }
 
     private fun drawGrid(canvas: Canvas, cx: Float, cy: Float, radius: Float) {
         canvas.drawCircle(cx, cy, radius, gridPaint)
         canvas.drawCircle(cx, cy, radius * 0.66f, gridPaint)
         canvas.drawCircle(cx, cy, radius * 0.33f, gridPaint)
-
         canvas.drawLine(cx - radius, cy, cx + radius, cy, gridPaint)
         canvas.drawLine(cx, cy - radius, cx, cy + radius, gridPaint)
     }
 
+    private fun drawCardinalLabels(canvas: Canvas, cx: Float, cy: Float, radius: Float) {
+        val margin = radius * 0.14f
+        canvas.drawText("N", cx, cy - radius + margin + labelPaint.textSize, labelPaint)
+        canvas.drawText("S", cx, cy + radius - margin * 0.5f, labelPaint)
+        canvas.drawText("E", cx + radius - margin, cy + labelPaint.textSize * 0.35f, labelPaint)
+        canvas.drawText("W", cx - radius + margin, cy + labelPaint.textSize * 0.35f, labelPaint)
+    }
+
     private fun drawSweep(canvas: Canvas, cx: Float, cy: Float, radius: Float) {
+        sweepFanRect.set(cx - radius, cy - radius, cx + radius, cy + radius)
+        canvas.drawArc(sweepFanRect, sweepAngle - 55f, 55f, true, sweepFanPaint)
         val angle = Math.toRadians(sweepAngle.toDouble())
         val x = cx + cos(angle).toFloat() * radius
         val y = cy + sin(angle).toFloat() * radius
-        canvas.drawLine(cx, cy, x, y, sweepPaint)
+        canvas.drawLine(cx, cy, x, y, sweepLinePaint)
     }
 
     private fun drawTarget(canvas: Canvas, cx: Float, cy: Float, radius: Float) {
-        val signalRadius = radius * (0.15f + 0.75f * (targetStrength / 100f))
+        val signalRadius = radius * (0.18f + 0.70f * (targetStrength / 100f))
         val azimuth = Math.toRadians(targetAzimuth.toDouble() - 90.0)
         val x = cx + cos(azimuth).toFloat() * signalRadius
         val y = cy + sin(azimuth).toFloat() * signalRadius
-        val paint = if (accepted) blipPaint else rejectedBlipPaint
-        val blipSize = radius * (0.03f + 0.03f * (targetStrength / 100f))
-        canvas.drawCircle(x, y, blipSize, paint)
+        val blipSize = radius * (0.038f + 0.022f * (targetStrength / 100f))
+        if (accepted) {
+            blipRingPaint.alpha = (220 / pulseScale).toInt().coerceIn(30, 220)
+            canvas.drawCircle(x, y, blipSize * pulseScale, blipRingPaint)
+            canvas.drawCircle(x, y, blipSize, blipFillPaint)
+        } else {
+            canvas.drawCircle(x, y, blipSize, rejectedBlipPaint)
+        }
     }
 }

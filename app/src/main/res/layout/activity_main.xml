@@ -108,6 +108,15 @@
                     android:text="@string/source_runtime_placeholder"
                     android:textAppearance="@style/TextAppearance.Aegis.Body"/>
 
+                <!-- Microphone status -->
+                <TextView
+                    android:id="@+id/tvMicStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="@string/mic_inactive"
+                    android:textAppearance="@style/TextAppearance.Aegis.BodySecondary"/>
+
                 <!-- Calibration info -->
                 <TextView
                     android:id="@+id/tvCalibration"
@@ -237,6 +246,15 @@
                         android:text="@string/calibration_button"/>
 
                 </LinearLayout>
+
+                <!-- Microphone toggle -->
+                <Button
+                    android:id="@+id/btnMic"
+                    style="@style/Widget.Aegis.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="@string/mic_enable"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

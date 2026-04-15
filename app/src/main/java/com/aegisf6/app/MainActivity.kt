@@ -34,6 +34,12 @@ class MainActivity : AppCompatActivity() {
         // Location can still be approximated by default center if not granted.
     }
 
+    private val micPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) viewModel.toggleMicrophone()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -91,6 +97,22 @@ class MainActivity : AppCompatActivity() {
         binding.btnCalibrate.setOnClickListener {
             viewModel.startCalibration()
         }
+        binding.btnMic.setOnClickListener {
+            if (viewModel.state.value.microphoneEnabled) {
+                viewModel.toggleMicrophone()
+            } else {
+                requestMicrophonePermissionAndEnable()
+            }
+        }
+    }
+
+    private fun requestMicrophonePermissionAndEnable() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED) {
+            viewModel.toggleMicrophone()
+        } else {
+            micPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
     }
 
     private fun requestLocationPermissionIfNeeded() {
@@ -130,12 +152,33 @@ class MainActivity : AppCompatActivity() {
 
                     binding.tvStatus.text = statusText
                     binding.ivStatusIndicator.setImageResource(statusDrawable)
+                    binding.tvStatus.setTextColor(
+                        ContextCompat.getColor(
+                            this@MainActivity,
+                            when {
+                                !state.monitorActive -> R.color.status_idle
+                                state.telemetry.accepted && state.telemetry.confidence > 70 -> R.color.status_alert
+                                else -> R.color.status_active
+                            }
+                        )
+                    )
 
                     binding.tvSourceResolved.text = getString(
                         R.string.source_runtime,
                         sourceLabel,
                         state.btMicCount
                     )
+
+                    binding.tvMicStatus.text = if (state.microphoneEnabled) {
+                        getString(R.string.mic_active)
+                    } else {
+                        getString(R.string.mic_inactive)
+                    }
+                    binding.btnMic.text = if (state.microphoneEnabled) {
+                        getString(R.string.mic_disable)
+                    } else {
+                        getString(R.string.mic_enable)
+                    }
 
                     binding.tvTelemetry.text = getString(
                         R.string.telemetry_template,
@@ -161,7 +204,8 @@ class MainActivity : AppCompatActivity() {
                     binding.radarView.updateTelemetry(
                         azimuthDeg = state.telemetry.azimuthDeg.toFloat(),
                         confidence = state.telemetry.confidence,
-                        accepted = state.telemetry.accepted
+                        accepted = state.telemetry.accepted,
+                        isActive = state.monitorActive
                     )
 
                     binding.tvCalibration.text = if (state.calibrating) {

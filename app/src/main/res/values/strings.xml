@@ -43,6 +43,12 @@
     <string name="radar_title">РАДАРНИЙ ОГЛЯД</string>
     <string name="radar_subtitle">Промінь сканує сектор, мітка показує напрямок та силу сигналу</string>
 
+    <!-- Microphone control -->
+    <string name="mic_enable">Увімкнути мікрофон</string>
+    <string name="mic_disable">Вимкнути мікрофон</string>
+    <string name="mic_active">Мікрофон: АКТИВНИЙ</string>
+    <string name="mic_inactive">Мікрофон: ВИМКНЕНО</string>
+
     <!-- Map controls -->
     <string name="map_style_standard">🗺️ OSM Стандарт</string>
     <string name="map_style_topo">🏔️ Топографічна</string>
