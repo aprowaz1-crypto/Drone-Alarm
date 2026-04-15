@@ -109,13 +109,27 @@ class AegisViewModel(
         _state.value = _state.value.copy(mapStyle = next)
     }
 
-    fun startCalibration() {
-        if (!_state.value.microphoneEnabled) {
-            DiagnosticsLog.toFixOnce(
+    fun startCalibration(): Boolean {
+        val state = _state.value
+        if (!state.microphoneEnabled) {
+            DiagnosticsLog.notOkOnce(
                 key = "calibration_without_mic",
-                message = "Calibration started while microphone is disabled; samples may not represent real audio input"
+                message = "Calibration blocked: microphone is disabled"
             )
+            return false
         }
+        if (state.btMicCount <= 0) {
+            DiagnosticsLog.notOkOnce(
+                key = "calibration_without_headset",
+                message = "Calibration blocked: no Bluetooth headset connected"
+            )
+            DiagnosticsLog.notAddedOnce(
+                key = "wired_headset_detection",
+                message = "Wired headset detection flow is not implemented yet"
+            )
+            return false
+        }
+
         calibrationSamples.clear()
         calibrationTicksLeft = 24
         val current = _state.value
@@ -123,6 +137,7 @@ class AegisViewModel(
             calibrating = true,
             calibrationSecondsLeft = 60
         )
+        return true
     }
 
     private suspend fun tick() {
@@ -308,6 +323,12 @@ class AegisViewModel(
         )
         val targetKind = resolveTargetKind(objectType)
         val distanceKm = rawDistanceKm.coerceAtMost(targetKind.maxDistanceKm)
+        if (targetKind == TargetKind.SHAHED && rawDistanceKm > 5.0) {
+            DiagnosticsLog.notOkOnce(
+                key = "shahed_outside_5km_window",
+                message = "Shahed-like profile detected outside 5km precision range"
+            )
+        }
 
         recentRawConfidences.addLast(rawConfidence)
         while (recentRawConfidences.size > 8) recentRawConfidences.removeFirst()
@@ -465,9 +486,9 @@ class AegisViewModel(
                 rejectReason = ""
             ),
             thresholds = ConfidenceThresholds(
-                phoneSolo = 85,
-                btArray2plus = 75,
-                btArray4plus = 65
+                phoneSolo = 88,
+                btArray2plus = 78,
+                btArray4plus = 70
             ),
             calibrating = false,
             calibrationSecondsLeft = 0,

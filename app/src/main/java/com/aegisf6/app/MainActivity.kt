@@ -109,7 +109,9 @@ class MainActivity : AppCompatActivity() {
             viewModel.toggleMapStyle()
         }
         binding.btnCalibrate.setOnClickListener {
-            viewModel.startCalibration()
+            if (!viewModel.startCalibration()) {
+                DiagnosticsLog.notOk("Calibration button pressed while prerequisites are not met")
+            }
         }
         binding.btnMic.setOnClickListener {
             if (viewModel.state.value.microphoneEnabled) {
@@ -195,6 +197,20 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         getString(R.string.mic_inactive)
                     }
+
+                    val diagnosticsSummary = buildList {
+                        if (!state.microphoneEnabled) add(getString(R.string.diagnostics_not_ok_mic_off))
+                        if (state.btMicCount <= 0) add(getString(R.string.diagnostics_not_added_headphones))
+                        if (!state.telemetry.accepted && state.telemetry.rejectReason.isNotBlank()) {
+                            add(getString(R.string.diagnostics_not_ok_reject, state.telemetry.rejectReason))
+                        }
+                    }.joinToString(separator = "\n")
+                    binding.tvDiagnostics.text = if (diagnosticsSummary.isBlank()) {
+                        getString(R.string.diagnostics_ok)
+                    } else {
+                        diagnosticsSummary
+                    }
+
                     binding.btnMic.text = if (state.microphoneEnabled) {
                         getString(R.string.mic_disable)
                     } else {
@@ -234,6 +250,14 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.calibration_running, state.calibrationSecondsLeft)
                     } else {
                         getString(R.string.calibration_idle, state.backgroundBaseline)
+                    }
+                    val canCalibrate = state.microphoneEnabled && state.btMicCount > 0
+                    binding.btnCalibrate.isEnabled = canCalibrate
+                    binding.btnCalibrate.alpha = if (canCalibrate) 1f else 0.55f
+                    binding.tvCalibrationHint.text = if (canCalibrate) {
+                        getString(R.string.calibration_ready_with_headphones)
+                    } else {
+                        getString(R.string.calibration_requires_headphones)
                     }
 
                     when (state.mapStyle) {

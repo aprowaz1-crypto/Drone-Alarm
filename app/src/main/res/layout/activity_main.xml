@@ -142,6 +142,27 @@
                     android:text="@string/filter_description"
                     android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/spacing_md"
+                    android:layout_marginBottom="@dimen/spacing_sm"
+                    android:background="@color/divider"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/diagnostics_title"
+                    android:textAppearance="@style/TextAppearance.Aegis.Body"/>
+
+                <TextView
+                    android:id="@+id/tvDiagnostics"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="@string/diagnostics_ok"
+                    android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -194,7 +215,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="⚙️ НАЛАШТУВАННЯ"
+                    android:text="НАЛАШТУВАННЯ"
                     android:textAppearance="@style/TextAppearance.Aegis.Headline"
                     android:layout_marginBottom="@dimen/spacing_md"/>
 
@@ -255,6 +276,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
                     android:text="@string/mic_enable"/>
+
+                <TextView
+                    android:id="@+id/tvCalibrationHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="@string/calibration_requires_headphones"
+                    android:textAppearance="@style/TextAppearance.Aegis.Caption"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -340,7 +369,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="🎵 Акустичний спектр"
+                    android:text="Акустичний спектр"
                     android:textAppearance="@style/TextAppearance.Aegis.Body"
                     android:layout_marginBottom="@dimen/spacing_sm"/>
 

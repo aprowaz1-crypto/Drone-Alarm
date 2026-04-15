@@ -2,40 +2,42 @@
     <string name="app_name">AEGIS-F6 Охорона Неба</string>
     
     <!-- Main interface -->
-    <string name="main_title">🇺🇦 AEGIS-F6 Троєщина</string>
+    <string name="main_title">AEGIS-F6 Троєщина</string>
     <string name="location_subtitle">вул. Ніколаєва 13, Київ</string>
     
     <!-- Source modes -->
-    <string name="source_auto">🤖 Авто (Розумний вибір)</string>
-    <string name="source_phone">📱 Тільки телефон</string>
-    <string name="source_array">🔊 Тільки масив мікрофонів</string>
+    <string name="source_auto">Авто (розумний вибір)</string>
+    <string name="source_phone">Тільки телефон</string>
+    <string name="source_array">Тільки масив мікрофонів</string>
 
     <!-- Status messages -->
-    <string name="status_active">🟢 МОНІТОРИНГ АКТИВНИЙ</string>
-    <string name="status_idle">🟡 МОНІТОРИНГ НА ПАУЗІ</string>
-    <string name="status_alert">🔴 ВИЯВЛЕНО ЗАГРОЗУ</string>
+    <string name="status_active">МОНІТОРИНГ АКТИВНИЙ</string>
+    <string name="status_idle">МОНІТОРИНГ НА ПАУЗІ</string>
+    <string name="status_alert">ВИЯВЛЕНО ЗАГРОЗУ</string>
 
     <!-- Source display -->
     <string name="mode_multi_array">Масив мікрофонів</string>
     <string name="mode_phone_solo">Телефон</string>
-    <string name="source_runtime">🎯 Режим: %1$s • Bluetooth: %2$d пристроїв</string>
+    <string name="source_runtime">Режим: %1$s • Bluetooth: %2$d пристроїв</string>
     <string name="source_runtime_placeholder">Режим: Авто • Bluetooth: 0 пристроїв</string>
     
     <!-- Filter management -->
-    <string name="filter_auto_mode">🏙️ Фільтр міського шуму: АВТО</string>
+    <string name="filter_auto_mode">Фільтр міського шуму: АВТО</string>
     <string name="filter_description">Автоматично відфільтровує міський шум та хибні спрацювання</string>
     
     <!-- Calibration -->
-    <string name="calibration_idle">📊 Калібрування: готове • Фон: %1$d%%</string>
-    <string name="calibration_running">⏱️ Калібрування фону: %1$d сек</string>
-    <string name="calibration_button">🎛️ Калібрувати 60с</string>
+    <string name="calibration_idle">Калібрування: готове • Фон: %1$d%%</string>
+    <string name="calibration_running">Калібрування фону: %1$d сек</string>
+    <string name="calibration_button">Калібрувати 60с</string>
     <string name="calibration_idle_placeholder">Калібрування: готове • Фон: 0 відс.</string>
+    <string name="calibration_requires_headphones">Калібрування доступне лише з підключеними Bluetooth-навушниками</string>
+    <string name="calibration_ready_with_headphones">Навушники підключено. Калібрування доступне</string>
 
     <!-- Telemetry display -->
     <string name="telemetry_title">ТЕЛЕМЕТРІЯ ОБ ЄКТА</string>
     <string name="telemetry_waiting">Очікування цілей...</string>
     <string name="telemetry_template">Тип: %1$s | Сигнал: %2$d%% -&gt; %3$d%% | Дистанція: %4$.2f км (макс %5$.1f) | Напрямок: %6$d° | Висота: %7$d м | Точність: %8$d м | Статус: %9$s</string>
-    <string name="spectrum_template">🎵 Спектр 40-150 Гц: [%1$s]</string>
+    <string name="spectrum_template">Спектр 40-150 Гц: [%1$s]</string>
     <string name="spectrum_placeholder">Спектр 40-150 Гц: [----------]</string>
     <string name="detection_accepted">✅ підтверджено</string>
     <string name="detection_rejected">❌ відхилено: %1$s</string>
@@ -50,13 +52,19 @@
     <string name="mic_inactive">Мікрофон: ВИМКНЕНО</string>
 
     <!-- Map controls -->
-    <string name="map_style_standard">🗺️ OSM Стандарт</string>
-    <string name="map_style_topo">🏔️ Топографічна</string>
-    <string name="map_title">🗺️ КАРТА РАЙОНУ</string>
+    <string name="map_style_standard">OSM Стандарт</string>
+    <string name="map_style_topo">Топографічна</string>
+    <string name="map_title">КАРТА РАЙОНУ</string>
     
     <!-- Location specific -->
-    <string name="troieshchyna_info">📍 Троєщина - житловий район на півночі Києва</string>
-    <string name="coverage_info">🛡️ Покриття: Шахед до 5 км, ракета до 10 км</string>
+    <string name="troieshchyna_info">Троєщина - житловий район на півночі Києва</string>
+    <string name="coverage_info">Покриття: Шахед до 5 км, ракета до 10 км</string>
+
+    <string name="diagnostics_title">ДІАГНОСТИКА</string>
+    <string name="diagnostics_ok">Усе стабільно: критичних проблем не виявлено</string>
+    <string name="diagnostics_not_ok_mic_off">NOT_OK: мікрофон вимкнений</string>
+    <string name="diagnostics_not_added_headphones">NOT_ADDED: Bluetooth-навушники не підключені</string>
+    <string name="diagnostics_not_ok_reject">NOT_OK: %1$s</string>
     
     <!-- Additional info -->
     <string name="app_subtitle">Система раннього виявлення повітряних цілей</string>

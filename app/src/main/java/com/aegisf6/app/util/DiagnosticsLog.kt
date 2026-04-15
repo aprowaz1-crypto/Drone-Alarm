@@ -36,4 +36,24 @@ object DiagnosticsLog {
             missing(message)
         }
     }
+
+    fun notOk(message: String) {
+        Log.w(TAG, "NOT_OK: $message")
+    }
+
+    fun notOkOnce(key: String, message: String) {
+        if (onceKeys.add("notok:$key")) {
+            notOk(message)
+        }
+    }
+
+    fun notAdded(message: String) {
+        Log.i(TAG, "NOT_ADDED: $message")
+    }
+
+    fun notAddedOnce(key: String, message: String) {
+        if (onceKeys.add("notadded:$key")) {
+            notAdded(message)
+        }
+    }
 }
