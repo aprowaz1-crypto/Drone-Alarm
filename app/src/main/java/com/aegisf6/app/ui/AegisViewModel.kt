@@ -10,6 +10,7 @@ import com.aegisf6.app.engine.AcousticRanging
 import com.aegisf6.app.engine.SmartSourceSelector
 import com.aegisf6.app.engine.StereoLocalization
 import com.aegisf6.app.engine.TargetClassifier
+import com.aegisf6.app.engine.ThreatAiAnalyzer
 import com.aegisf6.app.engine.TrajectoryMath
 import com.aegisf6.app.engine.UrbanNoiseFilter
 import com.aegisf6.app.model.ActiveSourceMode
@@ -55,6 +56,7 @@ class AegisViewModel(
     private var lastRejectReasonLogged = ""
     private var lastHouseholdNoiseLogAtMs = 0L
     private var headsetPresetLogged = false
+    private var aiAnalyzerLogged = false
 
     init {
         DiagnosticsLog.toFix("Real-time microphone DSP detection enabled; Bluetooth headset smoothing active")
@@ -176,6 +178,15 @@ class AegisViewModel(
             headsetPresetLogged = true
         } else if (btCount == 0) {
             headsetPresetLogged = false
+        }
+
+        if (!aiAnalyzerLogged) {
+            DiagnosticsLog.toFix("On-device threat AI analyzer active for Shahed/missile frequency profiling")
+            DiagnosticsLog.notAddedOnce(
+                key = "qwen_not_integrated",
+                message = "Qwen is not integrated; compact on-device audio AI is used instead"
+            )
+            aiAnalyzerLogged = true
         }
 
         try {
@@ -348,8 +359,16 @@ class AegisViewModel(
             frame.rmsDb,
             calibration.baseline.toDouble() - 70.0
         )
+        val aiResult = ThreatAiAnalyzer.analyze(
+            frame = frame,
+            backgroundDb = calibration.baseline.toDouble() - 70.0,
+            btCount = btCount,
+            strictMode = current.jblStrictMode
+        )
 
-        val likelyHouseholdNoise = isLikelyHouseholdNoise(frame, rawDistanceKm, btCount)
+        val objectTypeResolved = resolveObjectTypeFromAi(aiResult, objectType)
+
+        val likelyHouseholdNoise = isLikelyHouseholdNoise(frame, rawDistanceKm, btCount) || aiResult.noiseScore >= 72
         if (likelyHouseholdNoise) {
             val nowMs = System.currentTimeMillis()
             if (nowMs - lastHouseholdNoiseLogAtMs > 8_000L) {
@@ -358,7 +377,11 @@ class AegisViewModel(
             }
         }
 
-        val targetKind = resolveTargetKind(objectType)
+        val targetKind = if (aiResult.suggestedKind != TargetKind.UNKNOWN) {
+            aiResult.suggestedKind
+        } else {
+            resolveTargetKind(objectTypeResolved)
+        }
         val distanceKm = rawDistanceKm.coerceAtMost(targetKind.maxDistanceKm)
         if (targetKind == TargetKind.SHAHED && rawDistanceKm > 5.0) {
             DiagnosticsLog.notOkOnce(
@@ -383,7 +406,7 @@ class AegisViewModel(
         val effectiveThreshold = min(99, threshold + adaptiveThresholdBoost)
         val finalConfidence = blendConfidence(
             filterConfidence = filter.filteredConfidence,
-            classifierConfidence = classifierConfidence,
+            classifierConfidence = max(classifierConfidence, aiThreatConfidence(aiResult)),
             btCount = btCount,
             likelyHouseholdNoise = likelyHouseholdNoise
         )
@@ -412,6 +435,10 @@ class AegisViewModel(
             lastRejectReasonLogged = rejectReason
         }
 
+        if (aiResult.distanceReliability < 42 && finalConfidence > 0) {
+            DiagnosticsLog.notOk("AI distance reliability low: ${aiResult.distanceReliability}%")
+        }
+
         val (targetLat, targetLon) = TrajectoryMath.project(
             lat = current.userLat,
             lon = current.userLon,
@@ -422,7 +449,7 @@ class AegisViewModel(
         val telemetry = DetectionSnapshot(
             rawConfidence = rawConfidence,
             confidence = finalConfidence,
-            objectType = objectType,
+            objectType = objectTypeResolved,
             targetKind = targetKind,
             distanceKm = distanceKm,
             speedKmh = 0,
@@ -458,6 +485,18 @@ class AegisViewModel(
             normalized.contains("шахед") || normalized.contains("shahed") -> TargetKind.SHAHED
             else -> TargetKind.UNKNOWN
         }
+    }
+
+    private fun resolveObjectTypeFromAi(aiResult: com.aegisf6.app.engine.ThreatAiResult, fallback: String): String {
+        return when (aiResult.suggestedKind) {
+            TargetKind.SHAHED -> aiResult.suggestedLabel
+            TargetKind.MISSILE -> aiResult.suggestedLabel
+            TargetKind.UNKNOWN -> fallback
+        }
+    }
+
+    private fun aiThreatConfidence(aiResult: com.aegisf6.app.engine.ThreatAiResult): Int {
+        return max(aiResult.shahedScore, aiResult.missileScore)
     }
 
     private fun blendConfidence(filterConfidence: Int, classifierConfidence: Int, btCount: Int): Int {
