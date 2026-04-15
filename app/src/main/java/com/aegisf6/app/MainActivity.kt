@@ -11,8 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.aegisf6.app.audio.AudioProcessor
 import com.aegisf6.app.databinding.ActivityMainBinding
 import com.aegisf6.app.device.BluetoothProbe
+import com.aegisf6.app.device.LocationProvider
 import com.aegisf6.app.map.MapOverlayController
 import com.aegisf6.app.model.ActiveSourceMode
 import com.aegisf6.app.model.ForcedSourceMode
@@ -55,9 +57,13 @@ class MainActivity : AppCompatActivity() {
 
         Configuration.getInstance().userAgentValue = packageName
 
+        val bluetoothProbe = BluetoothProbe(this)
+        val audioProcessor = AudioProcessor(sampleRateHz = 44100, bufferSizeFrames = 2048)
+        val locationProvider = LocationProvider(this)
+
         viewModel = ViewModelProvider(
             this,
-            AegisViewModelFactory(BluetoothProbe(this))
+            AegisViewModelFactory(bluetoothProbe, audioProcessor, locationProvider)
         )[AegisViewModel::class.java]
 
         mapController = MapOverlayController(binding.map)
@@ -201,10 +207,9 @@ class MainActivity : AppCompatActivity() {
                         state.telemetry.rawConfidence,
                         state.telemetry.confidence,
                         state.telemetry.distanceKm,
-                        state.telemetry.speedKmh,
+                        state.telemetry.targetKind.maxDistanceKm,
                         state.telemetry.azimuthDeg,
                         state.telemetry.altitudeM,
-                        state.telemetry.etaSec,
                         state.telemetry.uncertaintyM,
                         if (state.telemetry.accepted) {
                             getString(R.string.detection_accepted)
@@ -218,6 +223,8 @@ class MainActivity : AppCompatActivity() {
                     binding.tvSpectrum.text = getString(R.string.spectrum_template, bar)
                     binding.radarView.updateTelemetry(
                         azimuthDeg = state.telemetry.azimuthDeg.toFloat(),
+                        altitudeM = state.telemetry.altitudeM,
+                        distanceKm = state.telemetry.distanceKm,
                         confidence = state.telemetry.confidence,
                         accepted = state.telemetry.accepted,
                         isActive = state.monitorActive

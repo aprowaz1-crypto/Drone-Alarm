@@ -16,10 +16,17 @@ enum class MapStyle {
     OSM_TOPO
 }
 
+enum class TargetKind(val maxDistanceKm: Double) {
+    SHAHED(5.0),
+    MISSILE(10.0),
+    UNKNOWN(5.0)
+}
+
 data class DetectionSnapshot(
     val rawConfidence: Int,
     val confidence: Int,
     val objectType: String,
+    val targetKind: TargetKind,
     val distanceKm: Double,
     val speedKmh: Int,
     val azimuthDeg: Int,

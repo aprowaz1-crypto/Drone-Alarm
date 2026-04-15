@@ -34,7 +34,7 @@
     <!-- Telemetry display -->
     <string name="telemetry_title">ТЕЛЕМЕТРІЯ ОБ ЄКТА</string>
     <string name="telemetry_waiting">Очікування цілей...</string>
-    <string name="telemetry_template">Тип: %1$s | Сигнал: %2$d%% -&gt; %3$d%% | Дистанція: %4$.2f км | Швидкість: %5$d км/год | Напрямок: %6$d° | Висота: %7$d м | Час: %8$d с | Точність: %9$d м | Статус: %10$s</string>
+    <string name="telemetry_template">Тип: %1$s | Сигнал: %2$d%% -&gt; %3$d%% | Дистанція: %4$.2f км (макс %5$.1f) | Напрямок: %6$d° | Висота: %7$d м | Точність: %8$d м | Статус: %9$s</string>
     <string name="spectrum_template">🎵 Спектр 40-150 Гц: [%1$s]</string>
     <string name="spectrum_placeholder">Спектр 40-150 Гц: [----------]</string>
     <string name="detection_accepted">✅ підтверджено</string>
@@ -56,7 +56,7 @@
     
     <!-- Location specific -->
     <string name="troieshchyna_info">📍 Троєщина - житловий район на півночі Києва</string>
-    <string name="coverage_info">🛡️ Покриття: радіус 5 км від вашої позиції</string>
+    <string name="coverage_info">🛡️ Покриття: Шахед до 5 км, ракета до 10 км</string>
     
     <!-- Additional info -->
     <string name="app_subtitle">Система раннього виявлення повітряних цілей</string>
