@@ -64,7 +64,10 @@ class AegisViewModel(
                     val current = _state.value
                     _state.value = current.copy(
                         userLat = location.latitude,
-                        userLon = location.longitude
+                        userLon = location.longitude,
+                        locationAccuracyM = location.accuracy.roundToInt().coerceAtLeast(0),
+                        locationTimestamp = location.timestamp,
+                        locationSourceLabel = location.sourceLabel
                     )
                 }
             }
@@ -631,6 +634,9 @@ class AegisViewModel(
             btMicCount = 0,
             userLat = baseLat,
             userLon = baseLon,
+            locationAccuracyM = 9999,
+            locationTimestamp = 0L,
+            locationSourceLabel = "Fallback",
             targetLat = baseLat,
             targetLon = baseLon,
             trajectory = listOf(Pair(baseLat, baseLon), Pair(baseLat, baseLon)),

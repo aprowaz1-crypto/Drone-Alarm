@@ -346,6 +346,16 @@
                         android:layout_marginTop="2dp"
                         android:text="@string/coverage_info"
                         android:textAppearance="@style/TextAppearance.Aegis.Caption" />
+
+                    <TextView
+                        android:id="@+id/tvLocationStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:padding="10dp"
+                        android:background="@color/md_theme_surfaceVariant"
+                        android:text="@string/location_runtime_placeholder"
+                        android:textAppearance="@style/TextAppearance.Aegis.Caption" />
                 </LinearLayout>
 
                 <org.osmdroid.views.MapView

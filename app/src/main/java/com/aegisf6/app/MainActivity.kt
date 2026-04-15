@@ -20,6 +20,7 @@ import com.aegisf6.app.ui.AegisViewModelFactory
 import com.aegisf6.app.util.DiagnosticsLog
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
+import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
@@ -169,6 +170,14 @@ class MainActivity : AppCompatActivity() {
                         state.btMicCount
                     )
 
+                    binding.tvLocationStatus.text = getString(
+                        R.string.location_runtime,
+                        state.locationSourceLabel,
+                        formatLocationQuality(state.locationSourceLabel, state.locationAccuracyM),
+                        formatLocationAccuracy(state.locationAccuracyM),
+                        formatLocationAge(state.locationTimestamp)
+                    )
+
                     binding.tvMicStatus.text = if (state.microphoneEnabled && headsetReady) {
                         getString(R.string.mic_active_verified)
                     } else if (state.microphoneEnabled) {
@@ -180,6 +189,9 @@ class MainActivity : AppCompatActivity() {
                     val diagnosticsSummary = buildList {
                         if (!state.microphoneEnabled) add(getString(R.string.diagnostics_not_ok_mic_off))
                         if (!headsetReady) add(getString(R.string.diagnostics_not_added_headphones))
+                        if (isLocationWeak(state.locationSourceLabel, state.locationAccuracyM)) {
+                            add(getString(R.string.diagnostics_not_ok_location, formatLocationQuality(state.locationSourceLabel, state.locationAccuracyM)))
+                        }
                         if (!state.telemetry.accepted && state.telemetry.rejectReason.isNotBlank()) {
                             add(getString(R.string.diagnostics_not_ok_reject, state.telemetry.rejectReason))
                         }
@@ -283,5 +295,33 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun formatLocationAccuracy(accuracyM: Int): String {
+        return if (accuracyM >= 9999) {
+            getString(R.string.location_accuracy_unknown)
+        } else {
+            getString(R.string.location_accuracy_meters, accuracyM)
+        }
+    }
+
+    private fun formatLocationQuality(sourceLabel: String, accuracyM: Int): String {
+        return when {
+            sourceLabel.equals("Fallback", ignoreCase = true) -> getString(R.string.location_quality_fallback)
+            accuracyM >= 9999 -> getString(R.string.location_quality_unknown)
+            accuracyM <= 25 -> getString(R.string.location_quality_good)
+            accuracyM <= 80 -> getString(R.string.location_quality_medium)
+            else -> getString(R.string.location_quality_low)
+        }
+    }
+
+    private fun isLocationWeak(sourceLabel: String, accuracyM: Int): Boolean {
+        return sourceLabel.equals("Fallback", ignoreCase = true) || accuracyM > 80
+    }
+
+    private fun formatLocationAge(timestamp: Long): String {
+        if (timestamp <= 0L) return getString(R.string.location_age_unknown)
+        val ageMs = max(0L, System.currentTimeMillis() - timestamp)
+        return getString(R.string.location_age_minutes, (ageMs / 60_000L).toInt())
     }
 }

@@ -17,7 +17,8 @@ data class LocationSnapshot(
     val latitude: Double,
     val longitude: Double,
     val accuracy: Float,
-    val timestamp: Long
+    val timestamp: Long,
+    val sourceLabel: String
 )
 
 class LocationProvider(private val context: Context) {
@@ -31,7 +32,8 @@ class LocationProvider(private val context: Context) {
                 latitude = location.latitude,
                 longitude = location.longitude,
                 accuracy = location.accuracy,
-                timestamp = location.time
+                timestamp = location.time,
+                sourceLabel = normalizeProviderLabel(location.provider, isLastKnown = false)
             )
         }
 
@@ -127,7 +129,8 @@ class LocationProvider(private val context: Context) {
                         latitude = gpsLoc.latitude,
                         longitude = gpsLoc.longitude,
                         accuracy = gpsLoc.accuracy,
-                        timestamp = gpsLoc.time
+                        timestamp = gpsLoc.time,
+                        sourceLabel = normalizeProviderLabel(LocationManager.GPS_PROVIDER, isLastKnown = true)
                     )
                 }
 
@@ -137,7 +140,8 @@ class LocationProvider(private val context: Context) {
                         latitude = networkLoc.latitude,
                         longitude = networkLoc.longitude,
                         accuracy = networkLoc.accuracy,
-                        timestamp = networkLoc.time
+                        timestamp = networkLoc.time,
+                        sourceLabel = normalizeProviderLabel(LocationManager.NETWORK_PROVIDER, isLastKnown = true)
                     )
                 }
             }
@@ -149,5 +153,14 @@ class LocationProvider(private val context: Context) {
             )
             null
         }
+    }
+
+    private fun normalizeProviderLabel(provider: String?, isLastKnown: Boolean): String {
+        val base = when (provider) {
+            LocationManager.GPS_PROVIDER -> "GPS"
+            LocationManager.NETWORK_PROVIDER -> "Мережа"
+            else -> "Невідоме джерело"
+        }
+        return if (isLastKnown) "$base • last known" else base
     }
 }

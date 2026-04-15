@@ -64,6 +64,17 @@
     <string name="map_style_standard">OSM Стандарт</string>
     <string name="map_style_topo">Топографічна</string>
     <string name="map_title">КАРТА РАЙОНУ</string>
+    <string name="location_runtime">Локація: %1$s • Якість: %2$s • Точність: %3$s • Вік: %4$s</string>
+    <string name="location_runtime_placeholder">Локація: Fallback • Якість: fallback • Точність: невідома • Вік: немає даних</string>
+    <string name="location_accuracy_unknown">невідома</string>
+    <string name="location_accuracy_meters">%1$d м</string>
+    <string name="location_quality_good">добра</string>
+    <string name="location_quality_medium">середня</string>
+    <string name="location_quality_low">низька</string>
+    <string name="location_quality_unknown">невідома</string>
+    <string name="location_quality_fallback">fallback</string>
+    <string name="location_age_unknown">немає даних</string>
+    <string name="location_age_minutes">%1$d хв</string>
     
     <!-- Location specific -->
     <string name="troieshchyna_info">Троєщина - житловий район на півночі Києва</string>
@@ -75,6 +86,7 @@
     <string name="diagnostics_not_ok_mic_off">NOT_OK: мікрофон вимкнений</string>
     <string name="diagnostics_not_added_headphones">NOT_ADDED: Bluetooth-навушники не підключені</string>
     <string name="diagnostics_not_ok_reject">NOT_OK: %1$s</string>
+    <string name="diagnostics_not_ok_location">NOT_OK: локація ненадійна (%1$s)</string>
     
     <!-- Additional info -->
     <string name="app_subtitle">Система раннього виявлення повітряних цілей</string>
