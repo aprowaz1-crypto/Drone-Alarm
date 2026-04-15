@@ -23,6 +23,7 @@ import com.aegisf6.app.util.DiagnosticsLog
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -49,8 +50,10 @@ class AegisViewModel(
     private val azimuthHistory = ArrayDeque<Int>()
     private val altitudeHistory = ArrayDeque<Int>()
     private val frequencyHistory = ArrayDeque<Float>()
+    private val rmsHistory = ArrayDeque<Double>()
     private var lastRejectReasonLogged = ""
     private var lastHouseholdNoiseLogAtMs = 0L
+    private var headsetPresetLogged = false
 
     init {
         DiagnosticsLog.toFix("Real-time microphone DSP detection enabled; Bluetooth headset smoothing active")
@@ -159,6 +162,13 @@ class AegisViewModel(
 
         val btCount = bluetoothProbe.connectedAudioMicDevices()
         val active = SmartSourceSelector.resolve(current.forcedMode, btCount)
+
+        if (btCount > 0 && !headsetPresetLogged) {
+            DiagnosticsLog.toFix("Headset anti-noise preset active (Bluetooth): stronger household noise suppression")
+            headsetPresetLogged = true
+        } else if (btCount == 0) {
+            headsetPresetLogged = false
+        }
 
         try {
             val frame = audioProcessor.captureFrame()
@@ -331,7 +341,7 @@ class AegisViewModel(
             calibration.baseline.toDouble() - 70.0
         )
 
-        val likelyHouseholdNoise = isLikelyHouseholdNoise(frame, rawDistanceKm)
+        val likelyHouseholdNoise = isLikelyHouseholdNoise(frame, rawDistanceKm, btCount)
         if (likelyHouseholdNoise) {
             val nowMs = System.currentTimeMillis()
             if (nowMs - lastHouseholdNoiseLogAtMs > 8_000L) {
@@ -361,7 +371,12 @@ class AegisViewModel(
         )
 
         val threshold = resolveThreshold(active, btCount, current.thresholds)
-        val finalConfidence = blendConfidence(filter.filteredConfidence, classifierConfidence, btCount)
+        val finalConfidence = blendConfidence(
+            filterConfidence = filter.filteredConfidence,
+            classifierConfidence = classifierConfidence,
+            btCount = btCount,
+            likelyHouseholdNoise = likelyHouseholdNoise
+        )
         val inRange = rawDistanceKm <= targetKind.maxDistanceKm
         val accepted = !calibration.calibrating && finalConfidence >= threshold && inRange && !likelyHouseholdNoise
         val rejectReason = when {
@@ -431,6 +446,17 @@ class AegisViewModel(
         return (combined + headsetBoost).coerceIn(0, 100)
     }
 
+    private fun blendConfidence(
+        filterConfidence: Int,
+        classifierConfidence: Int,
+        btCount: Int,
+        likelyHouseholdNoise: Boolean
+    ): Int {
+        val base = blendConfidence(filterConfidence, classifierConfidence, btCount)
+        if (!likelyHouseholdNoise) return base
+        return (base - 34).coerceIn(0, 100)
+    }
+
     private fun smoothAzimuth(rawAzimuth: Int, btCount: Int): Int {
         val window = if (btCount > 0) 10 else 6
         azimuthHistory.addLast(rawAzimuth)
@@ -458,14 +484,16 @@ class AegisViewModel(
 
     private fun stabilizeAltitude(rawAltitudeM: Int, previousAltitudeM: Int, btCount: Int): Int {
         val clampedRaw = rawAltitudeM.coerceIn(40, 3000)
-        val maxStep = if (btCount > 0) 50 else 70
+        val maxStep = if (btCount > 0) 30 else 70
         val delta = (clampedRaw - previousAltitudeM).coerceIn(-maxStep, maxStep)
         return (previousAltitudeM + delta).coerceAtLeast(0)
     }
 
-    private fun isLikelyHouseholdNoise(frame: AudioFrame, distanceKm: Double): Boolean {
+    private fun isLikelyHouseholdNoise(frame: AudioFrame, distanceKm: Double, btCount: Int): Boolean {
         frequencyHistory.addLast(frame.peakFrequencyHz)
         while (frequencyHistory.size > 14) frequencyHistory.removeFirst()
+        rmsHistory.addLast(frame.rmsDb)
+        while (rmsHistory.size > 14) rmsHistory.removeFirst()
         if (frequencyHistory.size < 8) return false
 
         val meanFreq = frequencyHistory.average().toFloat()
@@ -474,12 +502,24 @@ class AegisViewModel(
             .average()
         val stdDev = sqrt(variance.toDouble()).toFloat()
 
-        val householdBand = meanFreq in 92f..220f || meanFreq in 47f..63f
-        val stableTone = stdDev < 9.5f
-        val nearField = distanceKm < 2.3
-        val notTooLoud = frame.rmsDb < -18.0
+        val rmsVariance = if (rmsHistory.isNotEmpty()) {
+            val meanRms = rmsHistory.average()
+            rmsHistory.map { (it - meanRms) * (it - meanRms) }.average()
+        } else {
+            0.0
+        }
+        val rmsStdDev = sqrt(rmsVariance)
 
-        return householdBand && stableTone && nearField && notTooLoud
+        val householdBand = meanFreq in 92f..220f || meanFreq in 47f..63f
+        val stableTone = stdDev < if (btCount > 0) 6.8f else 9.5f
+        val stableLoudness = rmsStdDev < if (btCount > 0) 1.6 else 2.8
+        val nearField = distanceKm < 2.3
+        val notTooLoud = frame.rmsDb < if (btCount > 0) -16.0 else -18.0
+        val mainsHum = meanFreq in 48f..52f || meanFreq in 98f..102f || meanFreq in 148f..152f
+        val consoleFanBand = meanFreq in 108f..138f
+        val likelyJblHeadsetLocalNoise = btCount > 0 && (mainsHum || consoleFanBand) && stableTone && stableLoudness
+
+        return (householdBand && stableTone && stableLoudness && nearField && notTooLoud) || likelyJblHeadsetLocalNoise
     }
 
     private fun resolveUncertaintyM(
