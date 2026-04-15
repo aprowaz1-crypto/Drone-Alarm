@@ -19,6 +19,7 @@ import com.aegisf6.app.model.ForcedSourceMode
 import com.aegisf6.app.model.MapStyle
 import com.aegisf6.app.ui.AegisViewModel
 import com.aegisf6.app.ui.AegisViewModelFactory
+import com.aegisf6.app.util.DiagnosticsLog
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 
@@ -37,7 +38,14 @@ class MainActivity : AppCompatActivity() {
     private val micPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) viewModel.toggleMicrophone()
+        if (granted) {
+            viewModel.toggleMicrophone()
+        } else {
+            DiagnosticsLog.toFixOnce(
+                key = "mic_permission_denied",
+                message = "RECORD_AUDIO permission denied; microphone mode stays disabled"
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,6 +142,13 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
                 viewModel.state.collect { state ->
+                    if (!state.microphoneEnabled && state.telemetry.confidence > 0) {
+                        DiagnosticsLog.bugOnce(
+                            key = "telemetry_confidence_without_mic",
+                            message = "Non-zero telemetry confidence while microphone is disabled"
+                        )
+                    }
+
                     val sourceLabel = when (state.activeMode) {
                         ActiveSourceMode.MULTI_ARRAY -> getString(R.string.mode_multi_array)
                         ActiveSourceMode.PHONE_SOLO -> getString(R.string.mode_phone_solo)

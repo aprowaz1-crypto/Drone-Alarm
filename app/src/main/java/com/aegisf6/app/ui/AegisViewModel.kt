@@ -12,6 +12,7 @@ import com.aegisf6.app.model.ConfidenceThresholds
 import com.aegisf6.app.model.DetectionSnapshot
 import com.aegisf6.app.model.ForcedSourceMode
 import com.aegisf6.app.model.MapStyle
+import com.aegisf6.app.util.DiagnosticsLog
 import kotlin.math.max
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,10 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
     private var calibrationTicksLeft = 0
 
     init {
+        DiagnosticsLog.missingOnce(
+            key = "simulated_detection_engine",
+            message = "Detection pipeline is still simulated; real microphone DSP/ML inference is not connected yet"
+        )
         viewModelScope.launch {
             while (true) {
                 tick()
@@ -42,6 +47,7 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
     fun toggleMicrophone() {
         val current = _state.value
         val micEnabled = !current.microphoneEnabled
+        DiagnosticsLog.toFix("Microphone toggled: newState=$micEnabled")
         _state.value = current.copy(
             microphoneEnabled = micEnabled,
             monitorActive = micEnabled
@@ -64,6 +70,12 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
     }
 
     fun startCalibration() {
+        if (!_state.value.microphoneEnabled) {
+            DiagnosticsLog.toFixOnce(
+                key = "calibration_without_mic",
+                message = "Calibration started while microphone is disabled; samples may not represent real audio input"
+            )
+        }
         calibrationSamples.clear()
         calibrationTicksLeft = 24
         val current = _state.value
@@ -75,7 +87,16 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
 
     private fun tick() {
         val current = _state.value
-        if (!current.microphoneEnabled) return
+        if (!current.microphoneEnabled) {
+            if (current.monitorActive) {
+                DiagnosticsLog.bugOnce(
+                    key = "monitor_enabled_without_mic",
+                    message = "monitorActive=true while microphoneEnabled=false; forcing monitorActive to false"
+                )
+                _state.value = current.copy(monitorActive = false)
+            }
+            return
+        }
         val btCount = bluetoothProbe.connectedAudioMicDevices()
         val active = SmartSourceSelector.resolve(current.forcedMode, btCount)
 
@@ -139,6 +160,13 @@ class AegisViewModel(private val bluetoothProbe: BluetoothProbe) : ViewModel() {
             accepted = accepted,
             rejectReason = reason
         )
+
+        if (!current.monitorActive && telemetry.accepted) {
+            DiagnosticsLog.bugOnce(
+                key = "accepted_telemetry_while_idle",
+                message = "Accepted telemetry generated while monitor is inactive"
+            )
+        }
 
         _state.value = current.copy(
             activeMode = active,
