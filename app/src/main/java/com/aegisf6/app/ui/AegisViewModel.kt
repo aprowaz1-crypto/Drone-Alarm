@@ -105,13 +105,6 @@ class AegisViewModel(
         )
     }
 
-    fun toggleJblStrictMode() {
-        val current = _state.value
-        val enabled = !current.jblStrictMode
-        _state.value = current.copy(jblStrictMode = enabled)
-        DiagnosticsLog.toFix("JBL strict mode toggled: enabled=$enabled")
-    }
-
     fun toggleMapStyle() {
         val next = if (_state.value.mapStyle == MapStyle.OSM_STANDARD) {
             MapStyle.OSM_TOPO
@@ -266,7 +259,7 @@ class AegisViewModel(
         val targetKind = resolveTargetKind(classifiedType)
         val distanceForUi = simDistanceKm.coerceAtMost(targetKind.maxDistanceKm)
 
-        val threshold = resolveThreshold(active, btCount, current.thresholds, current.jblStrictMode)
+        val threshold = resolveThreshold(active, btCount, current.thresholds, current.precisionMode)
         val finalConfidence = blendConfidence(filter.filteredConfidence, classifierConfidence, btCount)
         val inRange = simDistanceKm <= targetKind.maxDistanceKm
         val accepted = !calibration.calibrating && finalConfidence >= threshold && inRange
@@ -358,7 +351,7 @@ class AegisViewModel(
             frame = frame,
             backgroundDb = calibration.baseline.toDouble() - 70.0,
             btCount = btCount,
-            strictMode = current.jblStrictMode
+            strictMode = current.precisionMode
         )
 
         val objectTypeResolved = resolveObjectTypeFromAi(aiResult, objectType)
@@ -396,8 +389,8 @@ class AegisViewModel(
             lastConfidences = recentRawConfidences.toList()
         )
 
-        val threshold = resolveThreshold(active, btCount, current.thresholds, current.jblStrictMode)
-        val adaptiveThresholdBoost = adaptiveThresholdBoost(frame.rmsDb, current.jblStrictMode)
+        val threshold = resolveThreshold(active, btCount, current.thresholds, current.precisionMode)
+        val adaptiveThresholdBoost = adaptiveThresholdBoost(frame.rmsDb, current.precisionMode)
         val effectiveThreshold = min(99, threshold + adaptiveThresholdBoost)
         val finalConfidence = blendConfidence(
             filterConfidence = filter.filteredConfidence,
@@ -571,9 +564,9 @@ class AegisViewModel(
         val notTooLoud = frame.rmsDb < if (btCount > 0) -16.0 else -18.0
         val mainsHum = meanFreq in 48f..52f || meanFreq in 98f..102f || meanFreq in 148f..152f
         val consoleFanBand = meanFreq in 108f..138f
-        val likelyJblHeadsetLocalNoise = btCount > 0 && (mainsHum || consoleFanBand) && stableTone && stableLoudness
+        val likelyHeadsetLocalNoise = btCount > 0 && (mainsHum || consoleFanBand) && stableTone && stableLoudness
 
-        return (householdBand && stableTone && stableLoudness && nearField && notTooLoud) || likelyJblHeadsetLocalNoise
+        return (householdBand && stableTone && stableLoudness && nearField && notTooLoud) || likelyHeadsetLocalNoise
     }
 
     private fun resolveUncertaintyM(
@@ -627,7 +620,7 @@ class AegisViewModel(
         return AegisUiState(
             monitorActive = false,
             microphoneEnabled = false,
-            jblStrictMode = false,
+            precisionMode = false,
             forcedMode = com.aegisf6.app.model.ForcedSourceMode.ARRAY_ONLY,
             activeMode = ActiveSourceMode.PHONE_SOLO,
             mapStyle = MapStyle.OSM_STANDARD,

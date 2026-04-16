@@ -97,9 +97,6 @@ class MainActivity : AppCompatActivity() {
                 requestMicrophonePermissionAndEnable()
             }
         }
-        binding.btnJblStrict.setOnClickListener {
-            viewModel.toggleJblStrictMode()
-        }
     }
 
     private fun requestMicrophonePermissionAndEnable() {
@@ -137,7 +134,6 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
 
-                    val sourceLabel = getString(R.string.mode_jbl_headset)
                     val headsetReady = bluetoothProbe.isReliableHeadsetReady()
 
                     // Update status with indicator
@@ -166,8 +162,11 @@ class MainActivity : AppCompatActivity() {
 
                     binding.tvSourceResolved.text = getString(
                         R.string.source_runtime,
-                        sourceLabel,
-                        state.btMicCount
+                        if (headsetReady) {
+                            getString(R.string.audio_channel_external_ready)
+                        } else {
+                            getString(R.string.audio_channel_external_searching)
+                        }
                     )
 
                     binding.tvLocationStatus.text = getString(
@@ -218,17 +217,11 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.mic_enable)
                     }
 
-                    binding.btnJblStrict.text = if (state.jblStrictMode) {
-                        getString(R.string.jbl_strict_disable)
-                    } else {
-                        getString(R.string.jbl_strict_enable)
-                    }
                     binding.tvSensitivityMode.text = when {
-                        state.jblStrictMode && state.telemetry.rejectReason.contains("побутовий шум", ignoreCase = true) -> {
-                            getString(R.string.adaptive_sensitivity_night_quiet)
+                        state.telemetry.rejectReason.contains("побутовий шум", ignoreCase = true) -> {
+                            getString(R.string.analysis_mode_noise_protected)
                         }
-                        state.jblStrictMode -> getString(R.string.jbl_strict_active)
-                        else -> getString(R.string.adaptive_sensitivity_normal)
+                        else -> getString(R.string.analysis_mode_adaptive)
                     }
 
                     binding.tvTelemetry.text = getString(

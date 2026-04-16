@@ -148,7 +148,7 @@
                     android:layout_marginTop="10dp"
                     android:padding="12dp"
                     android:background="@color/md_theme_surfaceVariant"
-                    android:text="JBL гарнітура"
+                    android:text="@string/mode_external_audio_channel"
                     android:textAppearance="@style/TextAppearance.Aegis.Body" />
 
                 <LinearLayout
@@ -160,20 +160,9 @@
                     <Button
                         android:id="@+id/btnMic"
                         style="@style/Widget.Aegis.Button.Primary"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
                         android:text="@string/mic_enable" />
-
-                    <Button
-                        android:id="@+id/btnJblStrict"
-                        style="@style/Widget.Aegis.Button.Secondary"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        android:text="@string/jbl_strict_enable" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -222,7 +211,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/adaptive_sensitivity_normal"
+                    android:text="@string/analysis_mode_adaptive"
                     android:textAppearance="@style/TextAppearance.Aegis.Caption" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

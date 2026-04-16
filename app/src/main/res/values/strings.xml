@@ -6,9 +6,9 @@
     <string name="location_subtitle">вул. Ніколаєва 17, Київ</string>
     
     <!-- Source modes -->
-    <string name="source_auto">JBL режим</string>
-    <string name="source_phone">JBL гарнітура</string>
-    <string name="source_array">JBL гарнітура</string>
+    <string name="source_auto">Зовнішній аудіоканал</string>
+    <string name="source_phone">Зовнішній аудіоканал</string>
+    <string name="source_array">Зовнішній аудіоканал</string>
 
     <!-- Status messages -->
     <string name="status_active">МОНІТОРИНГ АКТИВНИЙ</string>
@@ -16,11 +16,13 @@
     <string name="status_alert">ВИЯВЛЕНО ЗАГРОЗУ</string>
 
     <!-- Source display -->
-    <string name="mode_multi_array">JBL гарнітура</string>
-    <string name="mode_phone_solo">JBL гарнітура</string>
-    <string name="mode_jbl_headset">JBL гарнітура</string>
-    <string name="source_runtime">Режим: %1$s • Bluetooth профілі: %2$d</string>
-    <string name="source_runtime_placeholder">Режим: JBL гарнітура • Bluetooth профілі: 0</string>
+    <string name="mode_multi_array">Зовнішній аудіоканал</string>
+    <string name="mode_phone_solo">Зовнішній аудіоканал</string>
+    <string name="mode_external_audio_channel">Зовнішній аудіоканал</string>
+    <string name="source_runtime">Аудіоканал: %1$s</string>
+    <string name="source_runtime_placeholder">Аудіоканал: очікується підключення</string>
+    <string name="audio_channel_external_ready">зовнішній мікрофон підтверджено</string>
+    <string name="audio_channel_external_searching">пошук зовнішнього мікрофона</string>
     
     <!-- Filter management -->
     <string name="filter_auto_mode">Фільтр міського шуму: АВТО</string>
@@ -31,8 +33,8 @@
     <string name="calibration_running">Калібрування фону: %1$d сек</string>
     <string name="calibration_button">Калібрувати 60с</string>
     <string name="calibration_idle_placeholder">Калібрування: готове • Фон: 0 відс.</string>
-    <string name="calibration_requires_headphones">Калібрування доступне лише з підключеними Bluetooth-навушниками</string>
-    <string name="calibration_ready_with_headphones">Навушники підключено. Калібрування доступне</string>
+    <string name="calibration_requires_headphones">Калібрування доступне лише з підключеним зовнішнім мікрофоном</string>
+    <string name="calibration_ready_with_headphones">Зовнішній мікрофон підтверджено. Калібрування доступне</string>
 
     <!-- Telemetry display -->
     <string name="telemetry_title">ТЕЛЕМЕТРІЯ ОБ ЄКТА</string>
@@ -50,15 +52,11 @@
     <string name="mic_enable">Увімкнути мікрофон</string>
     <string name="mic_disable">Вимкнути мікрофон</string>
     <string name="mic_active">Мікрофон: АКТИВНИЙ</string>
-    <string name="mic_active_verified">JBL: ПІДКЛЮЧЕНО І ГОТОВО</string>
-    <string name="mic_active_unverified">JBL: МІКРОФОН УВІМКНЕНО, АЛЕ ПРОФІЛЬ НЕ ПІДТВЕРДЖЕНО</string>
+    <string name="mic_active_verified">Зовнішній мікрофон: ПІДКЛЮЧЕНО І ГОТОВО</string>
+    <string name="mic_active_unverified">Зовнішній мікрофон: ПОШУК АБО ПЕРЕВІРКА</string>
     <string name="mic_inactive">Мікрофон: ВИМКНЕНО</string>
-    <string name="jbl_strict_enable">JBL Strict: увімкнути</string>
-    <string name="jbl_strict_disable">JBL Strict: вимкнути</string>
-    <string name="jbl_strict_active">JBL Strict: АКТИВНИЙ</string>
-    <string name="jbl_strict_inactive">JBL Strict: ВИМКНЕНО</string>
-    <string name="adaptive_sensitivity_night_quiet">Адаптивна чутливість: НІЧ/ТИША (строгий режим)</string>
-    <string name="adaptive_sensitivity_normal">Адаптивна чутливість: НОРМА</string>
+    <string name="analysis_mode_noise_protected">Режим аналізу: посилене шумозаглушення</string>
+    <string name="analysis_mode_adaptive">Режим аналізу: адаптивний</string>
 
     <!-- Map controls -->
     <string name="map_style_standard">OSM Стандарт</string>
@@ -84,7 +82,7 @@
     <string name="diagnostics_ok">Усе стабільно: критичних проблем не виявлено</string>
     <string name="diagnostics_recent_logs">Останні логи</string>
     <string name="diagnostics_not_ok_mic_off">NOT_OK: мікрофон вимкнений</string>
-    <string name="diagnostics_not_added_headphones">NOT_ADDED: Bluetooth-навушники не підключені</string>
+    <string name="diagnostics_not_added_headphones">NOT_ADDED: зовнішній мікрофон не підтверджено</string>
     <string name="diagnostics_not_ok_reject">NOT_OK: %1$s</string>
     <string name="diagnostics_not_ok_location">NOT_OK: локація ненадійна (%1$s)</string>
     
