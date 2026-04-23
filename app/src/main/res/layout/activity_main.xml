@@ -190,12 +190,28 @@
                         android:text="@string/map_style_standard" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvCalibration"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@string/calibration_idle_placeholder"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnWebServer"
+                        style="@style/Widget.Aegis.Button.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/web_server_start" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvWebLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="12dp"
+                    android:background="@color/md_theme_surfaceVariant"
+                    android:text="@string/web_link_placeholder"
                     android:textAppearance="@style/TextAppearance.Aegis.BodySecondary" />
 
                 <TextView

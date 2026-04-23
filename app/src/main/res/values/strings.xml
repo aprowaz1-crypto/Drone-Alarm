@@ -89,4 +89,8 @@
     <!-- Additional info -->
     <string name="app_subtitle">Система раннього виявлення повітряних цілей</string>
     <string name="version_info">Версія: v1.0 • Троєщина Edition</string>
+    <string name="web_server_start">Запустити веб-сервер</string>
+    <string name="web_server_stop">Зупинити веб-сервер</string>
+    <string name="web_link_display">Посилання для iPad: %1$s</string>
+    <string name="web_link_placeholder">Посилання: сервер не запущено</string>
 </resources>

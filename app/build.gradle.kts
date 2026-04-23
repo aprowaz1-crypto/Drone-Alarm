@@ -52,4 +52,5 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
 
     implementation("org.osmdroid:osmdroid-android:6.1.20")
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
 }
