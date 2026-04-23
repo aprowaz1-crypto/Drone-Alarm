@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: AegisViewModel
     private lateinit var mapController: MapOverlayController
     private lateinit var bluetoothProbe: BluetoothProbe
-    private lateinit var webServer: WebServer
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -66,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         )[AegisViewModel::class.java]
 
         mapController = MapOverlayController(binding.map)
-        webServer = WebServer(this)
 
         setupButtons()
         observeState()
@@ -100,18 +98,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.btnWebServer.setOnClickListener {
-            if (webServer.isServerRunning()) {
-                webServer.stopServer()
-                binding.btnWebServer.text = getString(R.string.web_server_start)
-                binding.tvWebLink.text = getString(R.string.web_link_placeholder)
-            } else {
-                if (webServer.startServer()) {
-                    binding.btnWebServer.text = getString(R.string.web_server_stop)
-                    binding.tvWebLink.text = getString(R.string.web_link_display, webServer.getServerUrl())
-                } else {
-                    // Handle failure, maybe show toast
-                }
-            }
+            // Placeholder: display a sample link
+            binding.tvWebLink.text = getString(R.string.web_link_display, "http://192.168.1.100:8080")
+            binding.btnWebServer.text = getString(R.string.web_server_stop)
         }
     }
 
