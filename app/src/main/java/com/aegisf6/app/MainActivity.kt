@@ -98,8 +98,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.btnWebServer.setOnClickListener {
-            // Placeholder: display a sample link
-            binding.tvWebLink.text = getString(R.string.web_link_display, "http://192.168.1.100:8080")
+            val ip = getLocalIpAddress()
+            val link = if (ip != null) "http://$ip:8080" else "Не вдалося отримати IP-адресу"
+            binding.tvWebLink.text = getString(R.string.web_link_display, link)
             binding.btnWebServer.text = getString(R.string.web_server_stop)
         }
     }
@@ -321,5 +322,22 @@ class MainActivity : AppCompatActivity() {
         if (timestamp <= 0L) return getString(R.string.location_age_unknown)
         val ageMs = max(0L, System.currentTimeMillis() - timestamp)
         return getString(R.string.location_age_minutes, (ageMs / 60_000L).toInt())
+    }
+
+    private fun getLocalIpAddress(): String? {
+        try {
+            val interfaces = java.net.NetworkInterface.getNetworkInterfaces()
+            for (networkInterface in interfaces) {
+                val addresses = networkInterface.inetAddresses
+                for (address in addresses) {
+                    if (!address.isLoopbackAddress && address is java.net.InetAddress && address.hostAddress?.indexOf(':') == -1) {
+                        return address.hostAddress
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 }
