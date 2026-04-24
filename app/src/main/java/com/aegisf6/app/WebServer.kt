@@ -34,7 +34,7 @@ class WebServer(port: Int = 8080) : NanoHTTPD(port) {
 
         return when (uri) {
             "/" -> serveHTML()
-            else -> newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found")
+            else -> newFixedLengthResponse("Not Found")
         }
     }
 
