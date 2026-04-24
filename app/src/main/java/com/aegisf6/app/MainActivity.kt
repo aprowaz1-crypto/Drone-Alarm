@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: AegisViewModel
     private lateinit var mapController: MapOverlayController
     private lateinit var bluetoothProbe: BluetoothProbe
+    private lateinit var webServer: WebServer
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -66,6 +67,8 @@ class MainActivity : AppCompatActivity() {
 
         mapController = MapOverlayController(binding.map)
 
+        webServer = WebServer(8080)
+
         setupButtons()
         observeState()
         requestLocationPermissionIfNeeded()
@@ -79,6 +82,11 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         binding.map.onPause()
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        webServer.stopServer()
+        super.onDestroy()
     }
 
     private fun setupButtons() {
@@ -98,10 +106,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.btnWebServer.setOnClickListener {
-            val ip = getLocalIpAddress()
-            val link = if (ip != null) "http://$ip:8080" else "Не вдалося отримати IP-адресу"
-            binding.tvWebLink.text = getString(R.string.web_link_display, link)
-            binding.btnWebServer.text = getString(R.string.web_server_stop)
+            if (webServer.isServerRunning()) {
+                webServer.stopServer()
+                binding.btnWebServer.text = getString(R.string.web_server_start)
+                binding.tvWebLink.text = getString(R.string.web_link_placeholder)
+            } else {
+                if (webServer.startServer()) {
+                    binding.btnWebServer.text = getString(R.string.web_server_stop)
+                    binding.tvWebLink.text = getString(R.string.web_link_display, webServer.getServerUrl())
+                }
+            }
         }
     }
 
@@ -322,22 +336,5 @@ class MainActivity : AppCompatActivity() {
         if (timestamp <= 0L) return getString(R.string.location_age_unknown)
         val ageMs = max(0L, System.currentTimeMillis() - timestamp)
         return getString(R.string.location_age_minutes, (ageMs / 60_000L).toInt())
-    }
-
-    private fun getLocalIpAddress(): String? {
-        try {
-            val interfaces = java.net.NetworkInterface.getNetworkInterfaces()
-            for (networkInterface in interfaces) {
-                val addresses = networkInterface.inetAddresses
-                for (address in addresses) {
-                    if (!address.isLoopbackAddress && address is java.net.InetAddress && address.hostAddress?.indexOf(':') == -1) {
-                        return address.hostAddress
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
     }
 }

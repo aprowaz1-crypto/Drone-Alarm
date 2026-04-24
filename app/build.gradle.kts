@@ -52,4 +52,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
 
     implementation("org.osmdroid:osmdroid-android:6.1.20")
+    implementation("fi.iki.elonen:nanohttpd:2.3.1")
+    implementation("org.java-websocket:Java-WebSocket:1.5.4")
 }
