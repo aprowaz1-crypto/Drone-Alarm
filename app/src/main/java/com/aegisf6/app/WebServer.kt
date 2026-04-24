@@ -34,7 +34,7 @@ class WebServer(port: Int = 8080) : NanoHTTPD(port) {
 
         return when (uri) {
             "/" -> serveHTML()
-            else -> newFixedLengthResponse("Not Found")
+            else -> newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, NanoHTTPD.MIME_PLAINTEXT, "Not Found")
         }
     }
 
@@ -204,9 +204,11 @@ class WebServer(port: Int = 8080) : NanoHTTPD(port) {
             </html>
         """.trimIndent()
 
-        return newFixedLengthResponse(html).apply {
-            setMimeType("text/html; charset=utf-8")
-        }
+        return newFixedLengthResponse(
+            NanoHTTPD.Response.Status.OK,
+            "text/html; charset=utf-8",
+            html
+        )
     }
 
     fun startServer(): Boolean {
